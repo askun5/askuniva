@@ -1,0 +1,93 @@
+/* Univa Public Pages Styles */
+
+/* General */
+html {
+    overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Turbo Progress Bar */
+.turbo-progress-bar {
+    height: 3px;
+    background-color: #667eea;
+}
+
+/* Navigation Footer (Big Picture Style) */
+.navbar.fixed-bottom {
+    padding: 0.5rem 1rem;
+}
+
+.navbar.fixed-bottom .container {
+    align-items: center;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand img {
+    height: 24px;
+    width: auto;
+}
+
+/* Flash Messages */
+.alert {
+    border-radius: 0.5rem;
+}
+
+/* Form Styles */
+.form-control:focus,
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Cards */
+.card {
+    border-radius: 0.75rem;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+}
+
+/* Links */
+a {
+    color: #667eea;
+}
+
+a:hover {
+    color: #5a67d8;
+}
+
+/* Footer link styles */
+.navbar-nav .nav-link {
+    padding: 0.5rem 1rem;
+}
+
+@media (max-width: 991.98px) {
+    .navbar.fixed-bottom .navbar-collapse {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .navbar.fixed-bottom .navbar-text {
+        padding: 0.5rem 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 0.5rem;
+        width: 100%;
+        text-align: center;
+    }
+}
