@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
-    // Form validation feedback
-    const forms = document.querySelectorAll('form');
+    // Form validation feedback (skip forms handled by reCAPTCHA)
+    const forms = document.querySelectorAll('form:not(#signup-form):not(#signin-form)');
     forms.forEach(function(form) {
         form.addEventListener('submit', function(event) {
             if (!form.checkValidity()) {

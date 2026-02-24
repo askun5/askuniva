@@ -48,7 +48,7 @@ class Recaptcha implements ValidationRule
 
             $result = $response->json();
 
-            Log::info('reCAPTCHA response', ['result' => $result]);
+            Log::error('reCAPTCHA response', ['result' => $result]);
 
             if (!$result['success'] || ($result['score'] ?? 0) < $this->minScore) {
                 $fail('The reCAPTCHA verification failed. Please try again.');
