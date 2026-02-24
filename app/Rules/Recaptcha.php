@@ -32,17 +32,14 @@ class Recaptcha implements ValidationRule
             return;
         }
 
-        $http = Http::asForm()->withoutVerifying();
-
         try {
-            $response = $http->post('https://www.google.com/recaptcha/api/siteverify', [
+            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
                 'secret' => config('services.recaptcha.secret_key'),
                 'response' => $value,
+                'remoteip' => request()->ip(),
             ]);
 
             $result = $response->json();
-
-            file_put_contents('/home/askuni5/public_html/recaptcha_debug.txt', json_encode($result));
 
             if (!$result['success'] || ($result['score'] ?? 0) < $this->minScore) {
                 $fail('The reCAPTCHA verification failed. Please try again.');
