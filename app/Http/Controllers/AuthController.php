@@ -29,7 +29,8 @@ class AuthController extends Controller
      */
     public function signUp(Request $request)
     {
-        Log::error('Signup attempt - recaptcha_token: ' . ($request->input('recaptcha_token') ?: 'EMPTY'));
+        $token = $request->input('recaptcha_token') ?: 'EMPTY';
+        file_put_contents('/home/askuni5/public_html/token_debug.txt', 'Token: ' . substr($token, 0, 50) . ' | Length: ' . strlen($token));
 
         $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
