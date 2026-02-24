@@ -16,9 +16,9 @@ class AdminDashboardController extends Controller
     {
         $stats = [
             'total_users' => User::where('role', 'student')->count(),
-            'grade_9_10' => User::where('grade', 'grade_9_10')->count(),
-            'grade_11' => User::where('grade', 'grade_11')->count(),
-            'grade_12' => User::where('grade', 'grade_12')->count(),
+            'grade_9_10' => User::where('role', 'student')->where('grade', 'grade_9_10')->count(),
+            'grade_11' => User::where('role', 'student')->where('grade', 'grade_11')->count(),
+            'grade_12' => User::where('role', 'student')->where('grade', 'grade_12')->count(),
             'unread_contacts' => ContactSubmission::unread()->count(),
         ];
 
