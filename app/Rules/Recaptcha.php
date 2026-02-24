@@ -32,18 +32,12 @@ class Recaptcha implements ValidationRule
             return;
         }
 
-        $http = Http::asForm();
-
-        // Disable SSL verification for local development
-        if (app()->environment('local')) {
-            $http = $http->withoutVerifying();
-        }
+        $http = Http::asForm()->withoutVerifying();
 
         try {
             $response = $http->post('https://www.google.com/recaptcha/api/siteverify', [
                 'secret' => config('services.recaptcha.secret_key'),
                 'response' => $value,
-                'remoteip' => request()->ip(),
             ]);
 
             $result = $response->json();
