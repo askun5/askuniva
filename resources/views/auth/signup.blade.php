@@ -236,10 +236,17 @@
 <script>
     document.getElementById('signup-form').addEventListener('submit', function(e) {
         e.preventDefault();
+        const form = this;
+        if (typeof grecaptcha === 'undefined') {
+            alert('reCAPTCHA failed to load. Please disable any ad blockers and try again.');
+            return;
+        }
         grecaptcha.ready(function() {
             grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'signup'}).then(function(token) {
                 document.getElementById('recaptcha_token').value = token;
-                document.getElementById('signup-form').submit();
+                form.submit();
+            }).catch(function() {
+                alert('reCAPTCHA verification failed. Please refresh the page and try again.');
             });
         });
     });
