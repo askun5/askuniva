@@ -5,6 +5,7 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class Recaptcha implements ValidationRule
 {
@@ -38,15 +39,22 @@ class Recaptcha implements ValidationRule
             $http = $http->withoutVerifying();
         }
 
-        $response = $http->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => config('services.recaptcha.secret_key'),
-            'response' => $value,
-            'remoteip' => request()->ip(),
-        ]);
+        try {
+            $response = $http->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => config('services.recaptcha.secret_key'),
+                'response' => $value,
+                'remoteip' => request()->ip(),
+            ]);
 
-        $result = $response->json();
+            $result = $response->json();
 
-        if (!$result['success'] || ($result['score'] ?? 0) < $this->minScore) {
+            Log::info('reCAPTCHA response', ['result' => $result]);
+
+            if (!$result['success'] || ($result['score'] ?? 0) < $this->minScore) {
+                $fail('The reCAPTCHA verification failed. Please try again.');
+            }
+        } catch (\Exception $e) {
+            Log::error('reCAPTCHA request failed', ['error' => $e->getMessage()]);
             $fail('The reCAPTCHA verification failed. Please try again.');
         }
     }
