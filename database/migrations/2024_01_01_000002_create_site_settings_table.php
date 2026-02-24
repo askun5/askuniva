@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('site_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique();
+            $table->string('key', 191)->unique();
             $table->longText('value')->nullable();
             $table->string('type')->default('text'); // text, textarea, image, html
             $table->string('group')->default('general'); // general, branding, hero, footer, content
