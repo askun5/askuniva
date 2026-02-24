@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use App\Rules\Recaptcha;
 
@@ -28,6 +29,8 @@ class AuthController extends Controller
      */
     public function signUp(Request $request)
     {
+        Log::error('Signup attempt - recaptcha_token: ' . ($request->input('recaptcha_token') ?: 'EMPTY'));
+
         $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
