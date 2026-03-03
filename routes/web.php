@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\BrandingController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\GuidelinesManagementController;
 use App\Http\Controllers\Admin\ContactSubmissionsController;
+use App\Http\Controllers\VerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,11 +58,36 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Student Portal Routes (Authenticated Users)
+| Email Verification Routes (Authenticated, no verified check)
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->prefix('portal')->name('portal.')->group(function () {
+Route::middleware('auth')->group(function () {
+    // Show "check your email" page
+    Route::get('/email/verify', [VerificationController::class, 'notice'])
+        ->name('verification.notice');
+
+    // Handle the signed link from the email
+    Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+        ->middleware('signed')
+        ->name('verification.verify');
+
+    // Resend verification email
+    Route::post('/email/verification-notification', [VerificationController::class, 'resend'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+
+    // Sign out — kept here so unverified users can also sign out
+    Route::post('/portal/signout', [AuthController::class, 'signOut'])->name('portal.signout');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Student Portal Routes (Authenticated + Verified Users)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified'])->prefix('portal')->name('portal.')->group(function () {
     // Dashboard (default landing after login)
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -75,9 +101,6 @@ Route::middleware('auth')->prefix('portal')->name('portal.')->group(function () 
     // User Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
-    // Sign Out
-    Route::post('/signout', [AuthController::class, 'signOut'])->name('signout');
 });
 
 /*

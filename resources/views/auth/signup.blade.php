@@ -61,6 +61,29 @@
     .password-requirements .requirement.invalid {
         color: #dc3545;
     }
+
+    #zip-suggestions {
+        top: 100%;
+        left: 0;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    #zip-suggestions .list-group-item {
+        cursor: pointer;
+        border-left: none;
+        border-right: none;
+        font-size: 0.95rem;
+    }
+
+    #zip-suggestions .list-group-item:first-child { border-top: none; border-radius: 0.375rem 0.375rem 0 0; }
+    #zip-suggestions .list-group-item:last-child  { border-bottom: none; border-radius: 0 0 0.375rem 0.375rem; }
+
+    #city, #state { background-color: #f8f9fa; }
+    #city:not([readonly]), #state:not([readonly]) { background-color: #fff; }
 </style>
 @endpush
 
@@ -146,6 +169,61 @@
                                 @error('grade')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div>
+                        </div>
+
+                        {{-- Zip Code with City/State autocomplete --}}
+                        <div class="mb-3">
+                            <div class="position-relative">
+                                <div class="form-floating">
+                                    <input type="text"
+                                           class="form-control @error('zip_code') is-invalid @enderror"
+                                           id="zip_code"
+                                           name="zip_code"
+                                           value="{{ old('zip_code') }}"
+                                           placeholder="Zip Code"
+                                           maxlength="10"
+                                           autocomplete="off"
+                                           required>
+                                    <label for="zip_code">Zip Code</label>
+                                    @error('zip_code')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div id="zip-suggestions" class="list-group position-absolute w-100" style="display:none; z-index:1050;"></div>
+                            </div>
+                        </div>
+
+                        <div class="row" id="city-state-row" style="{{ old('city') ? '' : 'display:none;' }}">
+                            <div class="col-md-8 mb-3">
+                                <div class="form-floating">
+                                    <input type="text"
+                                           class="form-control @error('city') is-invalid @enderror"
+                                           id="city"
+                                           name="city"
+                                           value="{{ old('city') }}"
+                                           placeholder="City"
+                                           readonly>
+                                    <label for="city">City</label>
+                                    @error('city')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="form-floating">
+                                    <input type="text"
+                                           class="form-control @error('state') is-invalid @enderror"
+                                           id="state"
+                                           name="state"
+                                           value="{{ old('state') }}"
+                                           placeholder="State"
+                                           readonly>
+                                    <label for="state">State</label>
+                                    @error('state')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
 
@@ -311,5 +389,72 @@
     if (password.value) {
         validatePassword();
     }
+
+    // Zip code autocomplete
+    const zipInput       = document.getElementById('zip_code');
+    const zipSuggestions = document.getElementById('zip-suggestions');
+    const cityInput      = document.getElementById('city');
+    const stateInput     = document.getElementById('state');
+    const cityStateRow   = document.getElementById('city-state-row');
+    let zipTimer;
+
+    zipInput.addEventListener('input', function () {
+        const zip = this.value.replace(/\D/g, '').slice(0, 5);
+        this.value = zip;
+
+        clearTimeout(zipTimer);
+        zipSuggestions.style.display = 'none';
+        zipSuggestions.innerHTML = '';
+
+        if (zip.length === 5) {
+            zipTimer = setTimeout(() => lookupZip(zip), 350);
+        } else {
+            cityInput.value  = '';
+            stateInput.value = '';
+            cityStateRow.style.display = 'none';
+        }
+    });
+
+    async function lookupZip(zip) {
+        try {
+            const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+            if (!res.ok) {
+                showZipMessage('No location found for this zip code.');
+                return;
+            }
+            const data = await res.json();
+            zipSuggestions.innerHTML = '';
+
+            data.places.forEach(place => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'list-group-item list-group-item-action';
+                btn.innerHTML = `<i class="bi bi-geo-alt me-2 text-muted"></i>${place['place name']}, ${place['state abbreviation']} <span class="text-muted small ms-1">${zip}</span>`;
+                btn.addEventListener('click', () => {
+                    cityInput.value  = place['place name'];
+                    stateInput.value = place['state abbreviation'];
+                    cityStateRow.style.display = '';
+                    zipSuggestions.style.display = 'none';
+                });
+                zipSuggestions.appendChild(btn);
+            });
+
+            zipSuggestions.style.display = 'block';
+        } catch (e) {
+            showZipMessage('Could not look up zip code. Please try again.');
+        }
+    }
+
+    function showZipMessage(msg) {
+        zipSuggestions.innerHTML = `<div class="list-group-item text-muted small py-2">${msg}</div>`;
+        zipSuggestions.style.display = 'block';
+    }
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!zipInput.contains(e.target) && !zipSuggestions.contains(e.target)) {
+            zipSuggestions.style.display = 'none';
+        }
+    });
 </script>
 @endpush

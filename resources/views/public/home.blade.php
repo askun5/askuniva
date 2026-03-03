@@ -13,6 +13,7 @@
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
+        background-color: #1a3d8c;
         min-height: 100vh;
     }
 

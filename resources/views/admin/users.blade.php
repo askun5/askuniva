@@ -44,6 +44,7 @@
                         <th>Last Name</th>
                         <th>Email Address</th>
                         <th>Current Grade</th>
+                        <th>Location</th>
                         <th>Newsletter</th>
                         <th>Last Login</th>
                     </tr>
@@ -68,6 +69,16 @@
                                     @default
                                         <span class="badge bg-secondary">Not Set</span>
                                 @endswitch
+                            </td>
+                            <td>
+                                @if($user->city && $user->state)
+                                    {{ $user->city }}, {{ $user->state }}
+                                    @if($user->zip_code)
+                                        <span class="text-muted small">{{ $user->zip_code }}</span>
+                                    @endif
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
                             </td>
                             <td>
                                 @if($user->newsletter)

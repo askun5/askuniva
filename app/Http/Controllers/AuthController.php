@@ -35,6 +35,9 @@ class AuthController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'grade' => ['required', 'in:grade_9_10,grade_11,grade_12'],
+            'zip_code' => ['required', 'string', 'max:10'],
+            'city' => ['required', 'string', 'max:100'],
+            'state' => ['required', 'string', 'max:10'],
             'recaptcha_token' => ['required', new Recaptcha()],
         ]);
 
@@ -44,6 +47,9 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'grade' => $request->grade,
+            'zip_code' => $request->zip_code,
+            'city' => $request->city,
+            'state' => $request->state,
             'newsletter' => $request->boolean('newsletter'),
             'last_login_at' => now(),
         ]);
@@ -57,8 +63,10 @@ class AuthController extends Controller
             'logged_in_at' => now(),
         ]);
 
-        return redirect()->route('portal.dashboard')
-            ->with('success', 'Welcome to Univa! Your account has been created.');
+        $user->sendEmailVerificationNotification();
+
+        return redirect()->route('verification.notice')
+            ->with('success', 'Account created! Please check your email to verify your address.');
     }
 
     /**
@@ -99,6 +107,11 @@ class AuthController extends Controller
             // Redirect admin users to admin dashboard
             if (auth()->user()->isAdmin()) {
                 return redirect()->intended(route('admin.dashboard'));
+            }
+
+            // Bounce unverified students to the email verification page
+            if (! auth()->user()->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
             }
 
             return redirect()->intended(route('portal.dashboard'));

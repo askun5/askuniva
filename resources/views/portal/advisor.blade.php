@@ -2,6 +2,17 @@
 
 @section('title', 'AI Advisor')
 
+@push('styles')
+<style>
+    #chatfuel-card-body {
+        min-height: 480px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="row">
     <div class="col-12">
@@ -18,28 +29,39 @@
                     <i class="bi bi-robot me-2"></i>AI College Advisor
                 </h4>
             </div>
-            <div class="card-body p-0">
-                <!-- Chatfuel AI Agent Integration -->
-                <div id="chatfuel-container" class="chatfuel-wrapper">
-                    @if($chatfuelBotId)
-                        <!-- Chatfuel Widget will be embedded here -->
-                        <div id="chatfuel-widget" style="min-height: 600px; width: 100%;">
-                            <!-- The Chatfuel script will inject the chat interface here -->
-                            <div class="text-center py-5">
-                                <div class="spinner-border text-success mb-3" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                                <p class="text-muted">Loading AI Advisor...</p>
-                            </div>
-                        </div>
-                    @else
-                        <div class="text-center py-5">
-                            <i class="bi bi-chat-dots display-1 text-muted"></i>
-                            <h5 class="mt-3 text-muted">AI Advisor Coming Soon</h5>
-                            <p class="text-muted">The AI Advisor is being configured. Please check back later.</p>
-                        </div>
-                    @endif
-                </div>
+
+            <div class="card-body" id="chatfuel-card-body">
+                @if($chatfuelBotId)
+                    <div class="text-center" id="cf-launcher">
+                        <i class="bi bi-robot display-1 text-success mb-3 d-block"></i>
+                        <h5 class="mb-2">Your AI College Advisor is Ready</h5>
+                        <p class="text-muted mb-4">
+                            Get personalized college advice, essay tips, and<br>application guidance — just ask.
+                        </p>
+                        <button id="cf-start-btn" class="btn btn-success btn-lg px-5" disabled>
+                            <span class="spinner-border spinner-border-sm me-2" id="cf-spinner" role="status"></span>
+                            <span id="cf-btn-label">Loading…</span>
+                        </button>
+                    </div>
+                @else
+                    <div class="text-center">
+                        <i class="bi bi-chat-dots display-1 text-muted"></i>
+                        <h5 class="mt-3 text-muted">AI Advisor Coming Soon</h5>
+                        <p class="text-muted">The AI Advisor is being configured. Please check back later.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="card mt-4 border-warning">
+            <div class="card-body">
+                <h6 class="text-warning mb-1"><i class="bi bi-exclamation-triangle-fill me-2"></i>Disclaimer</h6>
+                <p class="text-muted small mb-0">
+                    This advisor is intended for use with universities located within the United States only.
+                    All information provided is for general guidance purposes and may not reflect the most current
+                    institutional policies, requirements, or deadlines. University data is subject to change;
+                    please verify all details directly with the respective institution before making any decisions.
+                </p>
             </div>
         </div>
 
@@ -58,56 +80,67 @@
 </div>
 @endsection
 
-@push('styles')
-<style>
-    .chatfuel-wrapper {
-        min-height: 600px;
-        border: 1px solid #e9ecef;
-        border-radius: 0 0 0.375rem 0.375rem;
-    }
-
-    .chatfuel-wrapper iframe {
-        width: 100%;
-        height: 600px;
-        border: none;
-    }
-</style>
-@endpush
-
 @push('scripts')
 @if($chatfuelBotId)
 <script>
-    // Chatfuel Integration
-    // Pass user context to Chatfuel for grade-aware responses
-    window.chatfuelUserAttributes = {
-        user_id: '{{ $user->id }}',
-        first_name: '{{ $user->first_name }}',
-        last_name: '{{ $user->last_name }}',
-        email: '{{ $user->email }}',
-        grade: '{{ $user->grade }}',
-        grade_display: '{{ $user->grade_display }}'
-    };
+(function () {
+    var startBtn  = document.getElementById('cf-start-btn');
+    var spinner   = document.getElementById('cf-spinner');
+    var btnLabel  = document.getElementById('cf-btn-label');
+    var cfElement = null;
 
-    // Chatfuel widget initialization
-    // Replace this with your actual Chatfuel embed code
-    (function() {
-        var chatfuelBotId = '{{ $chatfuelBotId }}';
+    // Load Chatfuel widget with full z-index so it renders properly
+    var s = document.createElement('script');
+    s.dataset.bot    = '{{ $chatfuelBotId }}';
+    s.dataset.zindex = '999999';
+    s.src            = 'https://panel.chatfuel.com/widgets/chat-widget/chat-widget.js';
+    s.async          = true;
+    s.defer          = true;
+    document.head.appendChild(s);
 
-        // Example Chatfuel web widget embed
-        // You'll need to replace this with the actual embed code from Chatfuel
-        var script = document.createElement('script');
-        script.src = 'https://widget.chatfuel.com/widget.js';
-        script.setAttribute('data-bot-id', chatfuelBotId);
-        script.setAttribute('data-container', 'chatfuel-widget');
+    // Poll for Chatfuel's widget root (any <div> added directly to <body>
+    // that is NOT our portal #wrapper)
+    var attempts = 0;
+    var poll = setInterval(function () {
+        attempts++;
 
-        // Pass user attributes for context
-        script.setAttribute('data-user-id', window.chatfuelUserAttributes.user_id);
-        script.setAttribute('data-user-first-name', window.chatfuelUserAttributes.first_name);
-        script.setAttribute('data-user-grade', window.chatfuelUserAttributes.grade);
+        document.querySelectorAll('body > div').forEach(function (div) {
+            if (div.id !== 'wrapper' && !cfElement) {
+                cfElement = div;
+            }
+        });
 
-        document.getElementById('chatfuel-widget').innerHTML = '';
-        document.getElementById('chatfuel-widget').appendChild(script);
-    })();
+        if (cfElement) {
+            clearInterval(poll);
+            enableButton();
+            return;
+        }
+
+        // Give up after 15 seconds
+        if (attempts > 30) {
+            clearInterval(poll);
+            enableButton();
+        }
+    }, 500);
+
+    function enableButton() {
+        spinner.style.display = 'none';
+        startBtn.disabled     = false;
+        btnLabel.textContent  = 'Start AI Chat';
+        startBtn.innerHTML    = '<i class="bi bi-chat-dots-fill me-2"></i>Start AI Chat';
+
+        startBtn.addEventListener('click', function () {
+            // Find the toggle button inside Chatfuel's widget and click it
+            var btn = cfElement
+                ? cfElement.querySelector('button')
+                : document.querySelector('body > div:not(#wrapper) button');
+
+            if (btn) {
+                btn.click();
+            }
+        });
+    }
+})();
 </script>
 @endif
 @endpush

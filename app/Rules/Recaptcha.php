@@ -27,6 +27,11 @@ class Recaptcha implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        // Skip reCAPTCHA verification in local development
+        if (app()->environment('local')) {
+            return;
+        }
+
         if (empty($value)) {
             $fail('The reCAPTCHA verification failed. Please try again.');
             return;

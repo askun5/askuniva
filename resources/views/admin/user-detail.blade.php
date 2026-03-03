@@ -60,6 +60,19 @@
                         </td>
                     </tr>
                     <tr>
+                        <th class="text-muted ps-0">Location</th>
+                        <td>
+                            @if($user->city && $user->state)
+                                {{ $user->city }}, {{ $user->state }}
+                                @if($user->zip_code)
+                                    <span class="text-muted small d-block">{{ $user->zip_code }}</span>
+                                @endif
+                            @else
+                                <span class="text-muted">Not provided</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
                         <th class="text-muted ps-0">Registered</th>
                         <td>{{ $user->created_at->format('M j, Y g:i A') }}</td>
                     </tr>

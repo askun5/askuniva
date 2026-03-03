@@ -110,5 +110,21 @@
     <script src="{{ asset('js/app.js') }}"></script>
 
     @stack('scripts')
+
+    <!-- Chatfuel Web Widget -->
+    <script>
+        if (!window._chatfuelLoaded) {
+            window._chatfuelLoaded = true;
+            (function() {
+                var script = document.createElement('script');
+                script.dataset.bot = "699f3f1ea25d6358e2644a4b";
+                script.dataset.zindex = "99999";
+                script.src = "https://panel.chatfuel.com/widgets/chat-widget/chat-widget.js";
+                script.async = true;
+                script.defer = true;
+                document.getElementsByTagName('head')[0].appendChild(script);
+            })();
+        }
+    </script>
 </body>
 </html>
