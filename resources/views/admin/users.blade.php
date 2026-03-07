@@ -11,25 +11,40 @@
 </div>
 
 <!-- Filter Tabs -->
-<ul class="nav nav-pills mb-4">
+<ul class="nav nav-pills mb-4 flex-wrap">
     <li class="nav-item">
         <a class="nav-link {{ $filter === null ? 'active' : '' }}" href="{{ route('admin.users') }}">
-            All Students
+            All
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link {{ $filter === 'grade_9_10' ? 'active' : '' }}" href="{{ route('admin.users', 'grade_9_10') }}">
-            Grade 9 & 10
+            HS 9 & 10
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link {{ $filter === 'grade_11' ? 'active' : '' }}" href="{{ route('admin.users', 'grade_11') }}">
-            Grade 11
+            HS 11
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link {{ $filter === 'grade_12' ? 'active' : '' }}" href="{{ route('admin.users', 'grade_12') }}">
-            Grade 12
+            HS 12
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ $filter === 'community_college' ? 'active' : '' }}" href="{{ route('admin.users', 'community_college') }}">
+            Comm. College
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ $filter === 'undergraduate' ? 'active' : '' }}" href="{{ route('admin.users', 'undergraduate') }}">
+            Undergraduate
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ $filter === 'graduate' ? 'active' : '' }}" href="{{ route('admin.users', 'graduate') }}">
+            Graduate
         </a>
     </li>
 </ul>
@@ -43,7 +58,7 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Email Address</th>
-                        <th>Current Grade</th>
+                        <th>Academic Level</th>
                         <th>Location</th>
                         <th>Newsletter</th>
                         <th>Last Login</th>
@@ -58,13 +73,22 @@
                             <td>
                                 @switch($user->grade)
                                     @case('grade_9_10')
-                                        <span class="badge bg-success">Grade 9 & 10</span>
+                                        <span class="badge bg-primary">HS 9 & 10</span>
                                         @break
                                     @case('grade_11')
-                                        <span class="badge bg-info">Grade 11</span>
+                                        <span class="badge bg-success">HS 11</span>
                                         @break
                                     @case('grade_12')
-                                        <span class="badge bg-warning text-dark">Grade 12</span>
+                                        <span class="badge bg-warning text-dark">HS 12</span>
+                                        @break
+                                    @case('community_college')
+                                        <span class="badge bg-info">Comm. College</span>
+                                        @break
+                                    @case('undergraduate')
+                                        <span class="badge bg-secondary">Undergrad</span>
+                                        @break
+                                    @case('graduate')
+                                        <span class="badge bg-dark">Graduate</span>
                                         @break
                                     @default
                                         <span class="badge bg-secondary">Not Set</span>

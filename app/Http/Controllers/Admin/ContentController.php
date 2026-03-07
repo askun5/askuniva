@@ -96,7 +96,6 @@ class ContentController extends Controller
             ['label' => 'Home', 'url' => '/'],
             ['label' => 'About', 'url' => '/about'],
             ['label' => 'Privacy', 'url' => '/privacy'],
-            ['label' => 'Terms', 'url' => '/terms'],
             ['label' => 'Contact', 'url' => '/contact'],
         ]));
 

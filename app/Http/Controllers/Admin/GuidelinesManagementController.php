@@ -23,7 +23,7 @@ class GuidelinesManagementController extends Controller
      */
     public function edit(string $grade)
     {
-        $validGrades = ['grade_9_10', 'grade_11', 'grade_12'];
+        $validGrades = ['grade_9_10', 'grade_11', 'grade_12', 'community_college', 'undergraduate', 'graduate'];
 
         if (!in_array($grade, $validGrades)) {
             abort(404);
@@ -70,10 +70,13 @@ class GuidelinesManagementController extends Controller
     private function getDefaultTitle(string $grade): string
     {
         return match($grade) {
-            'grade_9_10' => 'College Preparation for Grades 9 & 10',
-            'grade_11' => 'College Preparation for Grade 11',
-            'grade_12' => 'College Preparation for Grade 12',
-            default => 'College Preparation Guidelines',
+            'grade_9_10' => 'Guidelines for High School (Grades 9 & 10)',
+            'grade_11' => 'Guidelines for High School (Grade 11)',
+            'grade_12' => 'Guidelines for High School (Grade 12)',
+            'community_college' => 'Guidelines for Community College',
+            'undergraduate' => 'Guidelines for Undergraduate Students',
+            'graduate' => 'Guidelines for Graduate Students',
+            default => 'Academic Guidelines',
         };
     }
 }

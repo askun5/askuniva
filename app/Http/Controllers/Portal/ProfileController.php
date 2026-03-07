@@ -29,7 +29,7 @@ class ProfileController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'grade' => ['required', 'string', Rule::in(['grade_9_10', 'grade_11', 'grade_12'])],
+            'grade' => ['required', 'string', Rule::in(['grade_9_10', 'grade_11', 'grade_12', 'community_college', 'undergraduate', 'graduate'])],
         ]);
 
         $user->update([

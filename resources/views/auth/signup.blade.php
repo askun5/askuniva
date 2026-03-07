@@ -160,12 +160,15 @@
                                         id="grade"
                                         name="grade"
                                         required>
-                                    <option value="">Select your grade...</option>
-                                    <option value="grade_9_10" {{ old('grade') == 'grade_9_10' ? 'selected' : '' }}>Grade 9 & 10</option>
-                                    <option value="grade_11" {{ old('grade') == 'grade_11' ? 'selected' : '' }}>Grade 11</option>
-                                    <option value="grade_12" {{ old('grade') == 'grade_12' ? 'selected' : '' }}>Grade 12</option>
+                                    <option value="">Select your academic level...</option>
+                                    <option value="grade_9_10" {{ old('grade') == 'grade_9_10' ? 'selected' : '' }}>High School (Grades 9 & 10)</option>
+                                    <option value="grade_11" {{ old('grade') == 'grade_11' ? 'selected' : '' }}>High School (Grade 11)</option>
+                                    <option value="grade_12" {{ old('grade') == 'grade_12' ? 'selected' : '' }}>High School (Grade 12)</option>
+                                    <option value="community_college" {{ old('grade') == 'community_college' ? 'selected' : '' }}>Community College</option>
+                                    <option value="undergraduate" {{ old('grade') == 'undergraduate' ? 'selected' : '' }}>Undergraduate (University)</option>
+                                    <option value="graduate" {{ old('grade') == 'graduate' ? 'selected' : '' }}>Graduate (Master's/PhD)</option>
                                 </select>
-                                <label for="grade">Current Grade</label>
+                                <label for="grade">Academic Level</label>
                                 @error('grade')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -279,6 +282,18 @@
                                     <i class="bi bi-question-circle"></i>
                                     <span>Passwords match</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input @error('agree_privacy') is-invalid @enderror" type="checkbox" id="agree_privacy" name="agree_privacy" value="1" {{ old('agree_privacy') ? 'checked' : '' }} required>
+                                <label class="form-check-label" for="agree_privacy">
+                                    By creating a Univa account, you agree to our <a href="{{ route('privacy') }}" target="_blank">Privacy &amp; Disclaimers</a>
+                                </label>
+                                @error('agree_privacy')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 

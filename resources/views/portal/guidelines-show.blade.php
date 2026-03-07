@@ -10,41 +10,31 @@
                 <li class="breadcrumb-item"><a href="{{ route('portal.dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('portal.guidelines') }}">Guidelines</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    @switch($grade)
-                        @case('grade_9_10')
-                            Grade 9 & 10
-                            @break
-                        @case('grade_11')
-                            Grade 11
-                            @break
-                        @case('grade_12')
-                            Grade 12
-                            @break
-                    @endswitch
+                    {{ $guideline ? $guideline->grade_display : ucwords(str_replace('_', ' ', $grade)) }}
                 </li>
             </ol>
         </nav>
 
-        <!-- Grade Navigation Tabs -->
-        <ul class="nav nav-pills mb-4 justify-content-center">
+        <!-- Academic Level Navigation Tabs -->
+        @php
+            $tabs = [
+                'grade_9_10'        => ['icon' => 'bi-mortarboard',      'label' => 'HS Grades 9 & 10'],
+                'grade_11'          => ['icon' => 'bi-journal-bookmark',  'label' => 'HS Grade 11'],
+                'grade_12'          => ['icon' => 'bi-award',             'label' => 'HS Grade 12'],
+                'community_college' => ['icon' => 'bi-building',          'label' => 'Community College'],
+                'undergraduate'     => ['icon' => 'bi-book',              'label' => 'Undergraduate'],
+                'graduate'          => ['icon' => 'bi-mortarboard-fill',  'label' => 'Graduate'],
+            ];
+        @endphp
+        <ul class="nav nav-pills mb-4 justify-content-center flex-wrap">
+            @foreach($tabs as $key => $tab)
             <li class="nav-item">
-                <a class="nav-link {{ $grade === 'grade_9_10' ? 'active' : '' }}"
-                   href="{{ route('portal.guidelines.show', 'grade_9_10') }}">
-                    <i class="bi bi-mortarboard me-1"></i> Grade 9 & 10
+                <a class="nav-link {{ $grade === $key ? 'active' : '' }}"
+                   href="{{ route('portal.guidelines.show', $key) }}">
+                    <i class="bi {{ $tab['icon'] }} me-1"></i> {{ $tab['label'] }}
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link {{ $grade === 'grade_11' ? 'active' : '' }}"
-                   href="{{ route('portal.guidelines.show', 'grade_11') }}">
-                    <i class="bi bi-journal-bookmark me-1"></i> Grade 11
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ $grade === 'grade_12' ? 'active' : '' }}"
-                   href="{{ route('portal.guidelines.show', 'grade_12') }}">
-                    <i class="bi bi-award me-1"></i> Grade 12
-                </a>
-            </li>
+            @endforeach
         </ul>
 
         @if($guideline)

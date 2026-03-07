@@ -34,18 +34,4 @@ class PageController extends Controller
 
         return view('public.page', compact('page'));
     }
-
-    /**
-     * Display the Terms of Service page.
-     */
-    public function terms()
-    {
-        $page = Page::getBySlug('terms');
-
-        if (!$page) {
-            abort(404);
-        }
-
-        return view('public.page', compact('page'));
-    }
 }

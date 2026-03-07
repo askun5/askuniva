@@ -62,7 +62,7 @@
 
 @push('scripts')
 <!-- Optional: Include a rich text editor like TinyMCE or CKEditor -->
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.tiny.cloud/1/onlvr0krfuyklv8yayypsk62lsjbr5tmnrhtdy26olewb3up/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
 <script>
     tinymce.init({
         selector: '#content',

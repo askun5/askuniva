@@ -25,7 +25,7 @@ class GuidelinesController extends Controller
     public function show(string $grade)
     {
         $user = auth()->user();
-        $validGrades = ['grade_9_10', 'grade_11', 'grade_12'];
+        $validGrades = ['grade_9_10', 'grade_11', 'grade_12', 'community_college', 'undergraduate', 'graduate'];
 
         if (!in_array($grade, $validGrades)) {
             abort(404);

@@ -64,19 +64,28 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="grade" class="form-label">Current Grade</label>
+                        <label for="grade" class="form-label">Academic Level</label>
                         <select class="form-select @error('grade') is-invalid @enderror"
                                 id="grade"
                                 name="grade"
                                 required>
                             <option value="grade_9_10" {{ old('grade', $user->grade) === 'grade_9_10' ? 'selected' : '' }}>
-                                Grade 9 & 10
+                                High School (Grades 9 & 10)
                             </option>
                             <option value="grade_11" {{ old('grade', $user->grade) === 'grade_11' ? 'selected' : '' }}>
-                                Grade 11
+                                High School (Grade 11)
                             </option>
                             <option value="grade_12" {{ old('grade', $user->grade) === 'grade_12' ? 'selected' : '' }}>
-                                Grade 12
+                                High School (Grade 12)
+                            </option>
+                            <option value="community_college" {{ old('grade', $user->grade) === 'community_college' ? 'selected' : '' }}>
+                                Community College
+                            </option>
+                            <option value="undergraduate" {{ old('grade', $user->grade) === 'undergraduate' ? 'selected' : '' }}>
+                                Undergraduate (University)
+                            </option>
+                            <option value="graduate" {{ old('grade', $user->grade) === 'graduate' ? 'selected' : '' }}>
+                                Graduate (Master's/PhD)
                             </option>
                         </select>
                         @error('grade')
@@ -113,7 +122,7 @@
                         {{ $user->email }}
                     </li>
                     <li class="mb-2">
-                        <strong>Grade Level:</strong><br>
+                        <strong>Academic Level:</strong><br>
                         <span class="badge bg-primary">{{ $user->grade_display }}</span>
                     </li>
                     <li>

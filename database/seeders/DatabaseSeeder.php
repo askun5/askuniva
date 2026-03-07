@@ -37,7 +37,6 @@ class DatabaseSeeder extends Seeder
                 ['label' => 'Home', 'url' => '/'],
                 ['label' => 'About', 'url' => '/about'],
                 ['label' => 'Privacy', 'url' => '/privacy'],
-                ['label' => 'Terms', 'url' => '/terms'],
                 ['label' => 'Contact', 'url' => '/contact'],
             ]), 'type' => 'json', 'group' => 'footer'],
             ['key' => 'copyright_text', 'value' => 'Univa. All rights reserved.', 'type' => 'text', 'group' => 'footer'],
@@ -82,23 +81,6 @@ class DatabaseSeeder extends Seeder
 <p>We take reasonable measures to help protect your personal information from loss, theft, misuse, and unauthorized access.</p>
 <h2>Contact Us</h2>
 <p>If you have questions about this Privacy Policy, please contact us through our <a href="/contact">Contact page</a>.</p>',
-            ],
-            [
-                'slug' => 'terms',
-                'title' => 'Terms of Service',
-                'content' => '<p>Last updated: ' . date('F j, Y') . '</p>
-<h2>Acceptance of Terms</h2>
-<p>By accessing and using Univa, you agree to be bound by these Terms of Service.</p>
-<h2>Description of Service</h2>
-<p>Univa provides AI-powered college counseling services to help students prepare for university applications.</p>
-<h2>User Accounts</h2>
-<p>You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
-<h2>Acceptable Use</h2>
-<p>You agree not to use the service for any unlawful purpose or in any way that could damage, disable, or impair our services.</p>
-<h2>Disclaimer</h2>
-<p>The advice provided by Univa is for informational purposes only and should not be considered as professional counseling advice.</p>
-<h2>Changes to Terms</h2>
-<p>We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of modified terms.</p>',
             ],
         ];
 

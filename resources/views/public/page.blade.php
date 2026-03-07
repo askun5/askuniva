@@ -58,6 +58,15 @@
                     <div class="page-content">
                         {!! $page->content !!}
                     </div>
+
+                    @if($page->slug === 'about')
+                    <div class="text-center mt-5 pt-4 border-top">
+                        <h3 class="fw-bold mb-3">Ready to start?</h3>
+                        <a href="{{ route('signup') }}" class="btn btn-primary btn-lg px-5">
+                            Get Started
+                        </a>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

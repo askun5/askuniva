@@ -13,79 +13,45 @@
         </nav>
 
         <div class="text-center mb-5">
-            <h2 class="fw-bold mb-3">University Application Guidelines</h2>
-            <p class="text-muted lead">Select your grade level to view specific guidelines and recommendations</p>
+            <h2 class="fw-bold mb-3">Academic Guidelines</h2>
+            <p class="text-muted lead">Select your academic level to view specific guidelines and recommendations</p>
         </div>
 
+        @php
+            $levels = [
+                'grade_9_10'       => ['label' => 'High School (Grades 9 & 10)', 'icon' => 'bi-mortarboard',     'color' => 'primary',  'desc' => 'Foundation building and early preparation for your academic journey'],
+                'grade_11'         => ['label' => 'High School (Grade 11)',       'icon' => 'bi-journal-bookmark','color' => 'success',  'desc' => 'Strategic planning and test preparation for competitive applications'],
+                'grade_12'         => ['label' => 'High School (Grade 12)',       'icon' => 'bi-award',           'color' => 'warning',  'desc' => 'Final application steps and deadline management for success'],
+                'community_college'=> ['label' => 'Community College',            'icon' => 'bi-building',        'color' => 'info',     'desc' => 'Transfer planning, certifications, and career pathway guidance'],
+                'undergraduate'    => ['label' => 'Undergraduate',                'icon' => 'bi-book',            'color' => 'secondary','desc' => 'Navigating university life, internships, and career preparation'],
+                'graduate'         => ['label' => 'Graduate (Master\'s/PhD)',     'icon' => 'bi-mortarboard-fill','color' => 'dark',     'desc' => 'Research, applications, and advancing your academic career'],
+            ];
+        @endphp
+
         <div class="row justify-content-center g-4">
-            <!-- Grade 9 & 10 -->
+            @foreach($levels as $key => $level)
             <div class="col-md-4">
-                <a href="{{ route('portal.guidelines.show', 'grade_9_10') }}" class="text-decoration-none">
-                    <div class="card h-100 grade-card {{ $user->grade === 'grade_9_10' ? 'border-primary' : '' }}">
+                <a href="{{ route('portal.guidelines.show', $key) }}" class="text-decoration-none">
+                    <div class="card h-100 grade-card {{ $user->grade === $key ? 'border-primary' : '' }}">
                         <div class="card-body text-center p-4">
                             <div class="grade-icon mb-3">
-                                <i class="bi bi-mortarboard fs-1 text-primary"></i>
+                                <i class="bi {{ $level['icon'] }} fs-1 text-{{ $level['color'] }}"></i>
                             </div>
-                            <h4 class="card-title text-dark">Grade 9 & 10</h4>
-                            <p class="card-text text-muted">Foundation building and early preparation for your university journey</p>
-                            @if($user->grade === 'grade_9_10')
-                                <span class="badge bg-primary">Your Grade</span>
+                            <h4 class="card-title text-dark">{{ $level['label'] }}</h4>
+                            <p class="card-text text-muted">{{ $level['desc'] }}</p>
+                            @if($user->grade === $key)
+                                <span class="badge bg-primary">Your Level</span>
                             @endif
                         </div>
                         <div class="card-footer bg-transparent border-0 text-center pb-4">
-                            <span class="btn btn-outline-primary">
+                            <span class="btn btn-outline-{{ $level['color'] }}">
                                 View Guidelines <i class="bi bi-arrow-right"></i>
                             </span>
                         </div>
                     </div>
                 </a>
             </div>
-
-            <!-- Grade 11 -->
-            <div class="col-md-4">
-                <a href="{{ route('portal.guidelines.show', 'grade_11') }}" class="text-decoration-none">
-                    <div class="card h-100 grade-card {{ $user->grade === 'grade_11' ? 'border-primary' : '' }}">
-                        <div class="card-body text-center p-4">
-                            <div class="grade-icon mb-3">
-                                <i class="bi bi-journal-bookmark fs-1 text-success"></i>
-                            </div>
-                            <h4 class="card-title text-dark">Grade 11</h4>
-                            <p class="card-text text-muted">Strategic planning and test preparation for competitive applications</p>
-                            @if($user->grade === 'grade_11')
-                                <span class="badge bg-primary">Your Grade</span>
-                            @endif
-                        </div>
-                        <div class="card-footer bg-transparent border-0 text-center pb-4">
-                            <span class="btn btn-outline-success">
-                                View Guidelines <i class="bi bi-arrow-right"></i>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Grade 12 -->
-            <div class="col-md-4">
-                <a href="{{ route('portal.guidelines.show', 'grade_12') }}" class="text-decoration-none">
-                    <div class="card h-100 grade-card {{ $user->grade === 'grade_12' ? 'border-primary' : '' }}">
-                        <div class="card-body text-center p-4">
-                            <div class="grade-icon mb-3">
-                                <i class="bi bi-award fs-1 text-warning"></i>
-                            </div>
-                            <h4 class="card-title text-dark">Grade 12</h4>
-                            <p class="card-text text-muted">Final application steps and deadline management for success</p>
-                            @if($user->grade === 'grade_12')
-                                <span class="badge bg-primary">Your Grade</span>
-                            @endif
-                        </div>
-                        <div class="card-footer bg-transparent border-0 text-center pb-4">
-                            <span class="btn btn-outline-warning">
-                                View Guidelines <i class="bi bi-arrow-right"></i>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </div>
+            @endforeach
         </div>
 
         <div class="mt-5 text-center">

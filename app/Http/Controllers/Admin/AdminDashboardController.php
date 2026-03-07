@@ -44,21 +44,18 @@ class AdminDashboardController extends Controller
 
         $title = 'All Students';
 
-        if ($filter) {
-            switch ($filter) {
-                case 'grade_9_10':
-                    $query->where('grade', 'grade_9_10');
-                    $title = 'Grade 9 & 10 Students';
-                    break;
-                case 'grade_11':
-                    $query->where('grade', 'grade_11');
-                    $title = 'Grade 11 Students';
-                    break;
-                case 'grade_12':
-                    $query->where('grade', 'grade_12');
-                    $title = 'Grade 12 Students';
-                    break;
-            }
+        $validFilters = [
+            'grade_9_10'        => 'HS Grades 9 & 10 Students',
+            'grade_11'          => 'HS Grade 11 Students',
+            'grade_12'          => 'HS Grade 12 Students',
+            'community_college' => 'Community College Students',
+            'undergraduate'     => 'Undergraduate Students',
+            'graduate'          => 'Graduate Students',
+        ];
+
+        if ($filter && isset($validFilters[$filter])) {
+            $query->where('grade', $filter);
+            $title = $validFilters[$filter];
         }
 
         $users = $query->orderBy('last_name')->orderBy('first_name')->paginate(20);

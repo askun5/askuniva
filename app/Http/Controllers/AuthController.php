@@ -34,10 +34,11 @@ class AuthController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'grade' => ['required', 'in:grade_9_10,grade_11,grade_12'],
+            'grade' => ['required', 'in:grade_9_10,grade_11,grade_12,community_college,undergraduate,graduate'],
             'zip_code' => ['required', 'string', 'max:10'],
             'city' => ['required', 'string', 'max:100'],
             'state' => ['required', 'string', 'max:10'],
+            'agree_privacy' => ['accepted'],
             'recaptcha_token' => ['required', new Recaptcha()],
         ]);
 

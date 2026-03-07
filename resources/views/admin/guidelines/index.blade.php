@@ -8,15 +8,18 @@
 <div class="card">
     <div class="card-body">
         <p class="text-muted mb-4">
-            Manage the college preparation guidelines shown to students based on their grade level.
+            Manage the guidelines shown to students based on their academic level.
         </p>
 
         <div class="row">
             @php
                 $grades = [
-                    'grade_9_10' => ['name' => 'Grades 9 & 10', 'icon' => 'bi-journal-bookmark', 'color' => 'success'],
-                    'grade_11' => ['name' => 'Grade 11', 'icon' => 'bi-journal-text', 'color' => 'info'],
-                    'grade_12' => ['name' => 'Grade 12', 'icon' => 'bi-journal-check', 'color' => 'warning'],
+                    'grade_9_10'        => ['name' => 'HS Grades 9 & 10',  'icon' => 'bi-mortarboard',      'color' => 'primary'],
+                    'grade_11'          => ['name' => 'HS Grade 11',        'icon' => 'bi-journal-bookmark', 'color' => 'success'],
+                    'grade_12'          => ['name' => 'HS Grade 12',        'icon' => 'bi-journal-check',    'color' => 'warning'],
+                    'community_college' => ['name' => 'Community College',  'icon' => 'bi-building',         'color' => 'info'],
+                    'undergraduate'     => ['name' => 'Undergraduate',      'icon' => 'bi-book',             'color' => 'secondary'],
+                    'graduate'          => ['name' => 'Graduate',           'icon' => 'bi-mortarboard-fill', 'color' => 'dark'],
                 ];
             @endphp
 
@@ -26,7 +29,7 @@
                 @endphp
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 border-{{ $gradeInfo['color'] }}">
-                        <div class="card-header bg-{{ $gradeInfo['color'] }} {{ $gradeInfo['color'] == 'warning' ? 'text-dark' : 'text-white' }}">
+                        <div class="card-header bg-{{ $gradeInfo['color'] }} {{ in_array($gradeInfo['color'], ['warning', 'secondary', 'light']) ? 'text-dark' : 'text-white' }}">
                             <h5 class="mb-0">
                                 <i class="bi {{ $gradeInfo['icon'] }} me-2"></i>{{ $gradeInfo['name'] }}
                             </h5>
@@ -42,7 +45,7 @@
                             @endif
                         </div>
                         <div class="card-footer bg-transparent">
-                            <a href="{{ route('admin.guidelines.edit', $gradeKey) }}" class="btn btn-{{ $gradeInfo['color'] }} {{ $gradeInfo['color'] == 'warning' ? 'text-dark' : '' }} w-100">
+                            <a href="{{ route('admin.guidelines.edit', $gradeKey) }}" class="btn btn-{{ $gradeInfo['color'] }} {{ in_array($gradeInfo['color'], ['warning', 'secondary', 'light']) ? 'text-dark' : '' }} w-100">
                                 <i class="bi bi-pencil me-2"></i>Edit Guidelines
                             </a>
                         </div>

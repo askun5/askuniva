@@ -65,9 +65,12 @@ class User extends Authenticatable implements MustVerifyEmailContract
     public function getGradeDisplayAttribute(): string
     {
         return match($this->grade) {
-            'grade_9_10' => 'Grade 9 & 10',
-            'grade_11' => 'Grade 11',
-            'grade_12' => 'Grade 12',
+            'grade_9_10' => 'High School (Grades 9 & 10)',
+            'grade_11' => 'High School (Grade 11)',
+            'grade_12' => 'High School (Grade 12)',
+            'community_college' => 'Community College',
+            'undergraduate' => 'Undergraduate',
+            'graduate' => 'Graduate',
             default => 'Unknown',
         };
     }

@@ -28,7 +28,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Static Pages
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
-Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 
 // Contact Page
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');

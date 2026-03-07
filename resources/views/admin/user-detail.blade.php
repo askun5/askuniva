@@ -32,17 +32,26 @@
                         <td>{{ $user->email }}</td>
                     </tr>
                     <tr>
-                        <th class="text-muted ps-0">Current Grade</th>
+                        <th class="text-muted ps-0">Academic Level</th>
                         <td>
                             @switch($user->grade)
                                 @case('grade_9_10')
-                                    <span class="badge bg-success">Grade 9 & 10</span>
+                                    <span class="badge bg-primary">HS 9 & 10</span>
                                     @break
                                 @case('grade_11')
-                                    <span class="badge bg-info">Grade 11</span>
+                                    <span class="badge bg-success">HS 11</span>
                                     @break
                                 @case('grade_12')
-                                    <span class="badge bg-warning text-dark">Grade 12</span>
+                                    <span class="badge bg-warning text-dark">HS 12</span>
+                                    @break
+                                @case('community_college')
+                                    <span class="badge bg-info">Comm. College</span>
+                                    @break
+                                @case('undergraduate')
+                                    <span class="badge bg-secondary">Undergrad</span>
+                                    @break
+                                @case('graduate')
+                                    <span class="badge bg-dark">Graduate</span>
                                     @break
                                 @default
                                     <span class="badge bg-secondary">Not Set</span>
