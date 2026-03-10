@@ -9,6 +9,15 @@
 
     <title>@yield('title', 'Univa') - AI College Counselor</title>
 
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6WVMERGRQK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-6WVMERGRQK');
+    </script>
+
     <!-- Favicon -->
     @php
         $favicon = \App\Models\SiteSetting::get('site_favicon');
