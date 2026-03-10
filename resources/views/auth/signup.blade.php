@@ -167,6 +167,7 @@
                                     <option value="community_college" {{ old('grade') == 'community_college' ? 'selected' : '' }}>Community College</option>
                                     <option value="undergraduate" {{ old('grade') == 'undergraduate' ? 'selected' : '' }}>Undergraduate (University)</option>
                                     <option value="graduate" {{ old('grade') == 'graduate' ? 'selected' : '' }}>Graduate (Master's/PhD)</option>
+                                    <option value="gap_year" {{ old('grade') == 'gap_year' ? 'selected' : '' }}>Gap Year</option>
                                 </select>
                                 <label for="grade">Academic Level</label>
                                 @error('grade')

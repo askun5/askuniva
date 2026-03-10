@@ -20,6 +20,7 @@
                     'community_college' => ['name' => 'Community College',  'icon' => 'bi-building',         'color' => 'info'],
                     'undergraduate'     => ['name' => 'Undergraduate',      'icon' => 'bi-book',             'color' => 'secondary'],
                     'graduate'          => ['name' => 'Graduate',           'icon' => 'bi-mortarboard-fill', 'color' => 'dark'],
+                    'gap_year'          => ['name' => 'Gap Year',           'icon' => 'bi-calendar2-week',   'color' => 'danger'],
                 ];
             @endphp
 

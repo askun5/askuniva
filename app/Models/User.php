@@ -68,6 +68,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
             'grade_9_10' => 'High School (Grades 9 & 10)',
             'grade_11' => 'High School (Grade 11)',
             'grade_12' => 'High School (Grade 12)',
+            'gap_year' => 'Gap Year',
             'community_college' => 'Community College',
             'undergraduate' => 'Undergraduate',
             'graduate' => 'Graduate',

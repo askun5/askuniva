@@ -87,6 +87,9 @@
                             <option value="graduate" {{ old('grade', $user->grade) === 'graduate' ? 'selected' : '' }}>
                                 Graduate (Master's/PhD)
                             </option>
+                            <option value="gap_year" {{ old('grade', $user->grade) === 'gap_year' ? 'selected' : '' }}>
+                                Gap Year
+                            </option>
                         </select>
                         @error('grade')
                             <div class="invalid-feedback">{{ $message }}</div>
