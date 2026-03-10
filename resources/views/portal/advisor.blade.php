@@ -91,8 +91,12 @@
 
     // Load Chatfuel widget with full z-index so it renders properly
     var s = document.createElement('script');
-    s.dataset.bot    = '{{ $chatfuelBotId }}';
-    s.dataset.zindex = '999999';
+    s.dataset.bot            = '{{ $chatfuelBotId }}';
+    s.dataset.zindex         = '999999';
+    s.dataset.userAttributes = JSON.stringify({
+        academic_level: '{{ addslashes($user->grade_display) }}',
+        zip_code:       '{{ addslashes($user->zip_code) }}'
+    });
     s.src            = 'https://panel.chatfuel.com/widgets/chat-widget/chat-widget.js';
     s.async          = true;
     s.defer          = true;
