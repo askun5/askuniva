@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('grade_guidelines', function (Blueprint $table) {
             $table->id();
-            $table->enum('grade', ['grade_9_10', 'grade_11', 'grade_12'])->unique();
+            $table->enum('grade', ['grade_9_10', 'grade_11', 'grade_12', 'community_college', 'undergraduate', 'graduate', 'gap_year'])->unique();
             $table->string('title');
             $table->longText('content'); // HTML content for rich text
             $table->timestamps();
