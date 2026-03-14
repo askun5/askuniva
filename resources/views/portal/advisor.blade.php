@@ -3,6 +3,7 @@
 @section('title', 'AI Advisor')
 
 @push('styles')
+<meta name="turbo-visit-control" content="reload">
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <style>
     /* ── Chat panel ────────────────────────────────────────────── */
