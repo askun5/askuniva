@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\BrandingController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\GuidelinesManagementController;
 use App\Http\Controllers\Admin\ContactSubmissionsController;
+use App\Http\Controllers\Admin\AiUsageController;
 use App\Http\Controllers\VerificationController;
 
 /*
@@ -94,8 +95,11 @@ Route::middleware(['auth', 'verified'])->prefix('portal')->name('portal.')->grou
     Route::get('/guidelines', [GuidelinesController::class, 'index'])->name('guidelines');
     Route::get('/guidelines/{grade}', [GuidelinesController::class, 'show'])->name('guidelines.show');
 
-    // AI Advisor (Chatfuel integration)
+    // AI Advisor (Gemini)
     Route::get('/advisor', [AdvisorController::class, 'index'])->name('advisor');
+    Route::post('/advisor/session/new', [AdvisorController::class, 'newSession'])->name('advisor.session.new');
+    Route::get('/advisor/session/last', [AdvisorController::class, 'loadLastSession'])->name('advisor.session.last');
+    Route::post('/advisor/chat', [AdvisorController::class, 'chat'])->name('advisor.chat');
 
     // User Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
@@ -142,4 +146,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/contacts', [ContactSubmissionsController::class, 'index'])->name('contacts');
     Route::get('/contacts/{submission}', [ContactSubmissionsController::class, 'show'])->name('contacts.show');
     Route::delete('/contacts/{submission}', [ContactSubmissionsController::class, 'destroy'])->name('contacts.destroy');
+
+    // AI Usage Tracker
+    Route::get('/ai-usage', [AiUsageController::class, 'index'])->name('ai.usage');
 });

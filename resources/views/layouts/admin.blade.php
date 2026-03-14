@@ -61,6 +61,9 @@
                 <a class="list-group-item list-group-item-action bg-dark text-light border-0 p-3 {{ request()->routeIs('admin.guidelines*') ? 'active' : '' }}" href="{{ route('admin.guidelines') }}">
                     <i class="bi bi-book me-2"></i> Guidelines
                 </a>
+                <a class="list-group-item list-group-item-action bg-dark text-light border-0 p-3 {{ request()->routeIs('admin.ai.usage') ? 'active' : '' }}" href="{{ route('admin.ai.usage') }}">
+                    <i class="bi bi-bar-chart-line me-2"></i> AI Usage
+                </a>
                 <a class="list-group-item list-group-item-action bg-dark text-light border-0 p-3 {{ request()->routeIs('admin.contacts*') ? 'active' : '' }}" href="{{ route('admin.contacts') }}">
                     <i class="bi bi-envelope me-2"></i> Contact Messages
                     @php
