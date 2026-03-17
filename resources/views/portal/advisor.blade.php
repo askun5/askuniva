@@ -151,9 +151,9 @@
                             <i class="bi bi-chat-dots-fill me-2"></i>Start a New Chat
                         </button>
                         @if($lastSession)
-                        <br><button class="btn btn-outline-primary btn-lg px-5 mt-3" id="btn-welcome-load">
+                        <br><a href="#" class="d-inline-block mt-3 small" id="btn-welcome-load">
                             <i class="bi bi-clock-history me-1"></i>Load Last Chat
-                        </button>
+                        </a>
                         @endif
                     </div>
                 </div>
