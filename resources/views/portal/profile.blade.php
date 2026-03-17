@@ -5,18 +5,13 @@
 @section('content')
 <div class="row">
     <div class="col-lg-8">
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('portal.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Profile</li>
-            </ol>
-        </nav>
+        <h1 class="mt-0 mb-4">Profile</h1>
 
         <div class="card">
-            <div class="card-header bg-info text-white">
-                <h4 class="mb-0">
+            <div class="card-header">
+                <h5 class="mb-0">
                     <i class="bi bi-person me-2"></i>Edit Profile
-                </h4>
+                </h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('portal.profile.update') }}">
@@ -63,6 +58,44 @@
                         @enderror
                     </div>
 
+                    <div class="mb-3">
+                        <label for="zip_code" class="form-label">Zip Code</label>
+                        <div class="position-relative">
+                            <input type="text"
+                                   class="form-control @error('zip_code') is-invalid @enderror"
+                                   id="zip_code"
+                                   name="zip_code"
+                                   value="{{ old('zip_code', $user->zip_code) }}"
+                                   maxlength="10"
+                                   autocomplete="off">
+                            @error('zip_code')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div id="zip-suggestions" class="list-group position-absolute w-100" style="display:none; z-index:1050;"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3" id="city-state-row" style="{{ old('city', $user->city) ? '' : 'display:none;' }}">
+                        <div class="col-md-8">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="city"
+                                   name="city"
+                                   value="{{ old('city', $user->city) }}"
+                                   readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="state" class="form-label">State</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="state"
+                                   name="state"
+                                   value="{{ old('state', $user->state) }}"
+                                   readonly>
+                        </div>
+                    </div>
+
                     <div class="mb-4">
                         <label for="grade" class="form-label">Academic Level</label>
                         <select class="form-select @error('grade') is-invalid @enderror"
@@ -97,10 +130,10 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary btn-lg">
                             <i class="bi bi-check-lg me-2"></i>Save Changes
                         </button>
-                        <a href="{{ route('portal.dashboard') }}" class="btn btn-outline-secondary">
+                        <a href="{{ route('portal.dashboard') }}" class="btn btn-outline-primary btn-lg">
                             Cancel
                         </a>
                     </div>
@@ -128,6 +161,12 @@
                         <strong>Academic Level:</strong><br>
                         <span class="badge bg-primary">{{ $user->grade_display }}</span>
                     </li>
+                    @if($user->zip_code)
+                    <li class="mb-2">
+                        <strong>Location:</strong><br>
+                        {{ $user->city ? $user->city . ', ' . $user->state . ' ' : '' }}{{ $user->zip_code }}
+                    </li>
+                    @endif
                     <li>
                         <strong>Member Since:</strong><br>
                         {{ $user->created_at->format('F j, Y') }}
@@ -138,3 +177,72 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    const zipInput       = document.getElementById('zip_code');
+    const zipSuggestions = document.getElementById('zip-suggestions');
+    const cityInput      = document.getElementById('city');
+    const stateInput     = document.getElementById('state');
+    const cityStateRow   = document.getElementById('city-state-row');
+    let zipTimer;
+
+    zipInput.addEventListener('input', function () {
+        const zip = this.value.replace(/\D/g, '').slice(0, 5);
+        this.value = zip;
+
+        clearTimeout(zipTimer);
+        zipSuggestions.style.display = 'none';
+        zipSuggestions.innerHTML = '';
+
+        if (zip.length === 5) {
+            zipTimer = setTimeout(() => lookupZip(zip), 350);
+        } else {
+            cityInput.value  = '';
+            stateInput.value = '';
+            cityStateRow.style.display = 'none';
+        }
+    });
+
+    async function lookupZip(zip) {
+        try {
+            const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+            if (!res.ok) {
+                showZipMessage('No location found for this zip code.');
+                return;
+            }
+            const data = await res.json();
+            zipSuggestions.innerHTML = '';
+
+            data.places.forEach(place => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'list-group-item list-group-item-action';
+                btn.innerHTML = `<i class="bi bi-geo-alt me-2 text-muted"></i>${place['place name']}, ${place['state abbreviation']} <span class="text-muted small ms-1">${zip}</span>`;
+                btn.addEventListener('click', () => {
+                    cityInput.value  = place['place name'];
+                    stateInput.value = place['state abbreviation'];
+                    cityStateRow.style.display = '';
+                    zipSuggestions.style.display = 'none';
+                });
+                zipSuggestions.appendChild(btn);
+            });
+
+            zipSuggestions.style.display = 'block';
+        } catch (e) {
+            showZipMessage('Could not look up zip code. Please try again.');
+        }
+    }
+
+    function showZipMessage(msg) {
+        zipSuggestions.innerHTML = `<div class="list-group-item text-muted small py-2">${msg}</div>`;
+        zipSuggestions.style.display = 'block';
+    }
+
+    document.addEventListener('click', function (e) {
+        if (!zipInput.contains(e.target) && !zipSuggestions.contains(e.target)) {
+            zipSuggestions.style.display = 'none';
+        }
+    });
+</script>
+@endpush
