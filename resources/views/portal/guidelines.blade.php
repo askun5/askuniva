@@ -34,9 +34,6 @@
                 <a href="{{ route('portal.guidelines.show', $key) }}" class="text-decoration-none">
                     <div class="card h-100 grade-card {{ $user->grade === $key ? 'border-primary' : '' }}">
                         <div class="card-body text-center p-4">
-                            <div class="grade-icon mb-3">
-                                <i class="bi {{ $level['icon'] }} fs-1 text-{{ $level['color'] }}"></i>
-                            </div>
                             <h4 class="card-title text-dark">{{ $level['label'] }}</h4>
                             <p class="card-text text-muted">{{ $level['desc'] }}</p>
                             @if($user->grade === $key)
@@ -44,7 +41,7 @@
                             @endif
                         </div>
                         <div class="card-footer bg-transparent border-0 text-center pb-4">
-                            <span class="btn btn-outline-{{ $level['color'] }}">
+                            <span class="btn btn-primary btn-lg">
                                 View Guidelines <i class="bi bi-arrow-right"></i>
                             </span>
                         </div>
@@ -55,8 +52,8 @@
         </div>
 
         <div class="mt-5 text-center">
-            <a href="{{ route('portal.advisor') }}" class="btn btn-success btn-lg">
-                <i class="bi bi-robot me-2"></i>Have Questions? Chat with AI Advisor
+            <a href="{{ route('portal.advisor') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-robot me-2"></i>Chat with AI Advisor
             </a>
         </div>
     </div>

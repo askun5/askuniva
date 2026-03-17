@@ -10,12 +10,11 @@
         <div class="row">
             <!-- Quick Access Cards -->
             <div class="col-md-4 mb-4">
-                <div class="card h-100 border-primary">
+                <div class="card h-100">
                     <div class="card-body text-center">
-                        <i class="bi bi-book display-4 text-primary mb-3"></i>
                         <h5 class="card-title">Guidelines</h5>
                         <p class="card-text text-muted">View college preparation guidelines tailored for {{ $user->grade_display }}.</p>
-                        <a href="{{ route('portal.guidelines') }}" class="btn btn-primary">
+                        <a href="{{ route('portal.guidelines.show', $user->grade) }}" class="btn btn-primary btn-lg">
                             View Guidelines
                         </a>
                     </div>
@@ -23,12 +22,11 @@
             </div>
 
             <div class="col-md-4 mb-4">
-                <div class="card h-100 border-success">
+                <div class="card h-100">
                     <div class="card-body text-center">
-                        <i class="bi bi-robot display-4 text-success mb-3"></i>
                         <h5 class="card-title">AI Advisor</h5>
                         <p class="card-text text-muted">Chat with your AI college counselor for personalized advice.</p>
-                        <a href="{{ route('portal.advisor') }}" class="btn btn-success">
+                        <a href="{{ route('portal.advisor') }}" class="btn btn-primary btn-lg">
                             Start Chat
                         </a>
                     </div>
@@ -36,12 +34,11 @@
             </div>
 
             <div class="col-md-4 mb-4">
-                <div class="card h-100 border-info">
+                <div class="card h-100">
                     <div class="card-body text-center">
-                        <i class="bi bi-person display-4 text-info mb-3"></i>
                         <h5 class="card-title">Your Profile</h5>
                         <p class="card-text text-muted">Update your personal information and account settings.</p>
-                        <a href="{{ route('portal.profile') }}" class="btn btn-info text-white">
+                        <a href="{{ route('portal.profile') }}" class="btn btn-primary btn-lg">
                             Edit Profile
                         </a>
                     </div>

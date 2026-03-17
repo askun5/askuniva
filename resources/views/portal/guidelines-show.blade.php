@@ -5,64 +5,40 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('portal.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('portal.guidelines') }}">Guidelines</a></li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    {{ $guideline ? $guideline->grade_display : ucwords(str_replace('_', ' ', $grade)) }}
-                </li>
-            </ol>
-        </nav>
+        <h1 class="mt-0 mb-4">Guidelines</h1>
 
-        <!-- Academic Level Navigation Tabs -->
         @php
-            $tabs = [
-                'grade_9_10'        => ['icon' => 'bi-mortarboard',      'label' => 'HS Grades 9 & 10'],
-                'grade_11'          => ['icon' => 'bi-journal-bookmark',  'label' => 'HS Grade 11'],
-                'grade_12'          => ['icon' => 'bi-award',             'label' => 'HS Grade 12'],
-                'community_college' => ['icon' => 'bi-building',          'label' => 'Community College'],
-                'undergraduate'     => ['icon' => 'bi-book',              'label' => 'Undergraduate'],
-                'graduate'          => ['icon' => 'bi-mortarboard-fill',  'label' => 'Graduate'],
+            $gradeLabels = [
+                'grade_9_10'        => 'High School (Grades 9 & 10)',
+                'grade_11'          => 'High School (Grade 11)',
+                'grade_12'          => 'High School (Grade 12)',
+                'community_college' => 'Community College',
+                'undergraduate'     => 'Undergraduate',
+                'graduate'          => 'Graduate (Master\'s/PhD)',
             ];
         @endphp
-        <ul class="nav nav-pills mb-4 justify-content-center flex-wrap">
-            @foreach($tabs as $key => $tab)
-            <li class="nav-item">
-                <a class="nav-link {{ $grade === $key ? 'active' : '' }}"
-                   href="{{ route('portal.guidelines.show', $key) }}">
-                    <i class="bi {{ $tab['icon'] }} me-1"></i> {{ $tab['label'] }}
-                </a>
-            </li>
-            @endforeach
-        </ul>
+        @php
+            $gradeLabel = $guideline ? $guideline->grade_display : ($gradeLabels[$grade] ?? ucwords(str_replace('_', ' ', $grade)));
+        @endphp
 
-        @if($guideline)
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">
-                        <i class="bi bi-book me-2"></i>{{ $guideline->title }}
-                    </h4>
-                </div>
-                <div class="card-body">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">{{ $gradeLabel }}</h5>
+            </div>
+            <div class="card-body">
+                @if($guideline)
                     <div class="guideline-content">
                         {!! $guideline->content !!}
                     </div>
-                </div>
+                @else
+                    <p class="mb-0">Guidelines for this grade level are being prepared. Please check back soon!</p>
+                @endif
             </div>
-        @else
-            <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>
-                Guidelines for this grade level are being prepared. Please check back soon!
-            </div>
-        @endif
+        </div>
 
-        <div class="mt-4 d-flex justify-content-between align-items-center">
-            <a href="{{ route('portal.guidelines') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-2"></i>Back to All Guidelines
-            </a>
-            <a href="{{ route('portal.advisor') }}" class="btn btn-success">
-                <i class="bi bi-robot me-2"></i>Have Questions? Chat with AI Advisor
+        <div class="mt-4 d-flex justify-content-end">
+            <a href="{{ route('portal.advisor') }}" class="btn btn-primary btn-lg">
+                Chat with AI Advisor
             </a>
         </div>
     </div>
@@ -71,23 +47,6 @@
 
 @push('styles')
 <style>
-    .nav-pills .nav-link {
-        border-radius: 20px;
-        padding: 0.5rem 1.25rem;
-        margin: 0 0.25rem;
-        color: #495057;
-        background-color: #f8f9fa;
-    }
-
-    .nav-pills .nav-link:hover {
-        background-color: #e9ecef;
-    }
-
-    .nav-pills .nav-link.active {
-        background-color: #0d6efd;
-        color: white;
-    }
-
     .guideline-content {
         line-height: 1.8;
     }

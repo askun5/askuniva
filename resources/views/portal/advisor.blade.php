@@ -3,7 +3,6 @@
 @section('title', 'AI Advisor')
 
 @push('styles')
-<meta name="turbo-visit-control" content="reload">
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <style>
     /* ── Chat panel ────────────────────────────────────────────── */
@@ -119,31 +118,24 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('portal.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">AI Advisor</li>
-            </ol>
-        </nav>
+        <h1 class="mt-0 mb-4">AI Advisor</h1>
+
+        {{-- ── Tips ──────────────────────────────────────────────────── --}}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5><i class="bi bi-lightbulb me-2 text-warning"></i>Tips for Using the AI Advisor</h5>
+                <ul class="mb-0">
+                    <li>Be specific with your questions for better answers</li>
+                    <li>Ask about college requirements, test prep, extracurriculars, and application tips</li>
+                    <li>The advisor knows you're a <strong>{{ $user->grade_display }}</strong> student and will tailor advice accordingly</li>
+                    <li>You can ask follow-up questions to get more detailed information</li>
+                    <li>Your chat history is saved — use <strong>Load Last Chat</strong> to continue where you left off</li>
+                </ul>
+            </div>
+        </div>
 
         {{-- ── Main Chat Card ────────────────────────────────────────── --}}
         <div class="card shadow-sm">
-            <div class="card-header bg-success text-white d-flex align-items-center justify-content-between">
-                <h4 class="mb-0">
-                    <i class="bi bi-robot me-2"></i>AI College Advisor
-                </h4>
-                <div class="d-flex gap-2" id="chat-controls">
-                    <button id="btn-new-chat" class="btn btn-sm btn-outline-light">
-                        <i class="bi bi-plus-circle me-1"></i>New Chat
-                    </button>
-                    @if($lastSession)
-                    <button id="btn-load-last" class="btn btn-sm btn-light">
-                        <i class="bi bi-clock-history me-1"></i>Load Last Chat
-                    </button>
-                    @endif
-                </div>
-            </div>
-
             <div id="chat-panel">
                 {{-- Messages --}}
                 <div id="chat-messages">
@@ -155,12 +147,12 @@
                             Get personalised college advice tailored to your profile as a
                             <strong>{{ $user->grade_display }}</strong> student.
                         </p>
-                        <button class="btn btn-success btn-lg px-5" id="btn-welcome-start">
+                        <button class="btn btn-primary btn-lg px-5" id="btn-welcome-start">
                             <i class="bi bi-chat-dots-fill me-2"></i>Start a New Chat
                         </button>
                         @if($lastSession)
-                        <br><button class="btn btn-outline-secondary mt-3" id="btn-welcome-load">
-                            <i class="bi bi-clock-history me-1"></i>Continue Last Chat
+                        <br><button class="btn btn-outline-primary btn-lg px-5 mt-3" id="btn-welcome-load">
+                            <i class="bi bi-clock-history me-1"></i>Load Last Chat
                         </button>
                         @endif
                     </div>
@@ -187,11 +179,9 @@
         </div>
 
         {{-- ── Disclaimer ────────────────────────────────────────────── --}}
-        <div class="card mt-4 border-warning">
+        <div class="card mt-4 border-danger">
             <div class="card-body">
-                <h6 class="text-warning mb-1">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Disclaimer
-                </h6>
+                <h6 class="text-danger mb-1">Disclaimer</h6>
                 <p class="text-muted small mb-0">
                     This advisor is intended for use with universities located within the United States only.
                     All information provided is for general guidance purposes and may not reflect the most current
@@ -201,19 +191,6 @@
             </div>
         </div>
 
-        {{-- ── Tips ──────────────────────────────────────────────────── --}}
-        <div class="card mt-4 mb-4">
-            <div class="card-body">
-                <h5><i class="bi bi-lightbulb me-2 text-warning"></i>Tips for Using the AI Advisor</h5>
-                <ul class="mb-0">
-                    <li>Be specific with your questions for better answers</li>
-                    <li>Ask about college requirements, test prep, extracurriculars, and application tips</li>
-                    <li>The advisor knows you're a <strong>{{ $user->grade_display }}</strong> student and will tailor advice accordingly</li>
-                    <li>You can ask follow-up questions to get more detailed information</li>
-                    <li>Your chat history is saved — use <strong>Load Last Chat</strong> to continue where you left off</li>
-                </ul>
-            </div>
-        </div>
     </div>
 </div>
 @endsection
