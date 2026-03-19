@@ -15,14 +15,6 @@ body {
     background-color: #667eea;
 }
 
-/* Navigation Footer (Big Picture Style) */
-.navbar.fixed-bottom {
-    padding: 0.5rem 1rem;
-}
-
-.navbar.fixed-bottom .container {
-    align-items: center;
-}
 
 .navbar-brand {
     display: flex;

@@ -18,19 +18,14 @@
     }
 
     .hero-section {
-        min-height: calc(100vh - 70px);
+        min-height: calc(100vh - 56px); /* Account for top nav */
         display: flex;
         align-items: center;
-        padding-bottom: 70px; /* Account for fixed footer */
     }
 
     .hero-content {
         color: white;
-    }
-
-    .hero-logo {
-        max-width: 123px;
-        height: auto;
+        max-width: 920px;
     }
 
     .hero-content h1 {
@@ -96,25 +91,17 @@
 
 @section('content')
 <section class="hero-section">
-    <div class="container px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5">
+    <div class="container-fluid px-3">
+        <div class="row">
             <div class="col-lg-8">
                 <div class="hero-content">
-                    @php
-                        $siteLogo = \App\Models\SiteSetting::get('site_logo');
-                    @endphp
-                    @if($siteLogo)
-                        <img src="{{ Storage::url($siteLogo) }}" alt="Univa Logo" class="hero-logo mb-4">
-                    @else
-                        <img src="{{ asset('images/univa-logo.png') }}" alt="Univa Logo" class="hero-logo mb-4">
-                    @endif
                     <h1>{{ $heroTitle }}</h1>
                     <p>{{ $heroSubtext }}</p>
                     <div class="cta-buttons">
-                        <a href="{{ route('signup') }}" class="btn btn-get-started btn-lg">
+                        <a href="#" class="btn btn-get-started btn-lg" data-bs-toggle="modal" data-bs-target="#signupModal">
                             GET STARTED
                         </a>
-                        <a href="{{ route('signin') }}" class="btn btn-signin btn-lg">
+                        <a href="#" class="btn btn-signin btn-lg" data-bs-toggle="modal" data-bs-target="#signinModal">
                             SIGN IN
                         </a>
                     </div>

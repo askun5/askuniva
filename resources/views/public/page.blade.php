@@ -8,7 +8,6 @@
 <style>
     body.content-page {
         background-color: #f8f9fa;
-        padding-bottom: 100px; /* Account for fixed footer */
     }
 
     .content-section {

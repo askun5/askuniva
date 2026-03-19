@@ -41,12 +41,12 @@
         <div class="contact-card">
             <div class="card shadow">
                 <div class="card-body p-5">
-                    <h2 class="card-title text-center mb-4">Contact Us</h2>
-                    <p class="text-muted text-center mb-4">Have questions? We'd love to hear from you.</p>
+                    <h1 class="text-center mb-2">Contact Us</h1>
+                    <h2 class="h5 text-muted text-center mb-4">Have questions? We'd love to hear from you.</h2>
 
-                    @if(session('success'))
+                    @if(session('contact_success'))
                         <div class="alert alert-success">
-                            {{ session('success') }}
+                            {{ session('contact_success') }}
                         </div>
                     @endif
 
@@ -84,7 +84,7 @@
 
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-send me-2"></i>Send Message
+                                Send Message
                             </button>
                         </div>
                     </form>

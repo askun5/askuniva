@@ -29,7 +29,10 @@ class ProfileController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'grade' => ['required', 'string', Rule::in(['grade_9_10', 'grade_11', 'grade_12', 'community_college', 'undergraduate', 'graduate'])],
+            'grade' => ['required', 'string', Rule::in(['grade_9_10', 'grade_11', 'grade_12', 'community_college', 'undergraduate', 'graduate', 'gap_year'])],
+            'zip_code' => ['nullable', 'string', 'max:10'],
+            'city' => ['nullable', 'string', 'max:255'],
+            'state' => ['nullable', 'string', 'max:2'],
         ]);
 
         $user->update([
@@ -37,6 +40,9 @@ class ProfileController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'grade' => $request->grade,
+            'zip_code' => $request->zip_code,
+            'city' => $request->city,
+            'state' => $request->state,
         ]);
 
         return back()->with('success', 'Profile updated successfully.');

@@ -202,9 +202,8 @@
                                     ['label' => 'Contact', 'url' => '/contact'],
                                 ];
                             @endphp
-                            @foreach($footerLinks as $i => $link)
-                                @if($i > 0) &middot; @endif
-                                <a href="{{ $link['url'] }}">{{ $link['label'] }}</a>
+                            @foreach($footerLinks as $link)
+                                <a href="{{ $link['url'] }}" class="me-3">{{ $link['label'] }}</a>
                             @endforeach
                         </div>
                     </div>

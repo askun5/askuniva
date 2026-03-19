@@ -36,6 +36,6 @@ class ContactController extends Controller
 
         Mail::to('support@askuniva.com')->send(new ContactSubmissionReceived($submission));
 
-        return back()->with('success', 'Thank you for your message! We will get back to you soon.');
+        return back()->with('contact_success', 'Thank you for your message! We will get back to you soon.');
     }
 }

@@ -80,7 +80,7 @@
                     <form method="POST" action="{{ route('portal.signout') }}">
                         @csrf
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-outline-secondary">
+                            <button type="submit" class="btn btn-outline-primary btn-lg">
                                 Sign Out
                             </button>
                         </div>
