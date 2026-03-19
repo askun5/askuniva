@@ -23,11 +23,16 @@ class ContactController extends Controller
      */
     public function submit(Request $request)
     {
-        $request->validate([
+        $rules = [
             'email' => ['required', 'email', 'max:255'],
             'comments' => ['required', 'string', 'max:5000'],
-            'recaptcha_token' => ['required', new Recaptcha()],
-        ]);
+        ];
+
+        if (!auth()->check()) {
+            $rules['recaptcha_token'] = ['required', new Recaptcha()];
+        }
+
+        $request->validate($rules);
 
         $submission = ContactSubmission::create([
             'email' => $request->email,

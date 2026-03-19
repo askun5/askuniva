@@ -146,8 +146,8 @@
                             Profile
                         </a>
 
-                        <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}"
-                           href="{{ route('contact') }}">
+                        <a class="nav-link" href="#"
+                           data-bs-toggle="modal" data-bs-target="#portalContactModal">
                             <div class="sb-nav-link-icon"><i class="fas fa-envelope"></i></div>
                             Contact
                         </a>
@@ -184,31 +184,93 @@
             </main>
 
             <!-- Footer -->
-            <footer class="py-4 bg-light mt-auto">
+            <footer class="py-4 bg-dark mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">
-                            &copy; <span id="copyright-year"></span>
-                            @php
-                                $copyrightText = \App\Models\SiteSetting::get('copyright_text', 'Univa. All rights reserved.');
-                            @endphp
-                            {{ $copyrightText }}
-                        </div>
                         <div>
                             @php
                                 $footerLinks = json_decode(\App\Models\SiteSetting::get('footer_links', '[]'), true) ?? [
-                                    ['label' => 'Home', 'url' => '/'],
+                                    ['label' => 'About', 'url' => '/about'],
                                     ['label' => 'Privacy', 'url' => '/privacy'],
                                     ['label' => 'Contact', 'url' => '/contact'],
                                 ];
                             @endphp
                             @foreach($footerLinks as $link)
-                                <a href="{{ $link['url'] }}" class="me-3">{{ $link['label'] }}</a>
+                                @if($link['label'] === 'Contact')
+                                    <a href="#" class="text-light me-3" data-bs-toggle="modal" data-bs-target="#portalContactModal">{{ $link['label'] }}</a>
+                                @else
+                                    <a href="{{ $link['url'] }}" class="text-light me-3">{{ $link['label'] }}</a>
+                                @endif
                             @endforeach
+                        </div>
+                        <div class="text-light opacity-75">
+                            @php
+                                $copyrightText = \App\Models\SiteSetting::get('copyright_text', 'Univa. All rights reserved.');
+                            @endphp
+                            &copy; <span id="copyright-year"></span> {{ $copyrightText }}
                         </div>
                     </div>
                 </div>
             </footer>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal fade" id="portalContactModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body px-5 pb-5 pt-0">
+                    <div class="text-center mb-4">
+                        <h1 class="mb-2">Contact Us</h1>
+                        <h2 class="h5 text-muted mb-0">Have questions? We'd love to hear from you.</h2>
+                    </div>
+
+                    @if(session('contact_success'))
+                        <div class="alert alert-success">{{ session('contact_success') }}</div>
+                    @endif
+
+                    <form method="POST" action="{{ route('contact.submit') }}" id="portal-contact-form">
+                        @csrf
+                        <input type="hidden" name="form_type" value="contact">
+
+                        @error('recaptcha_token')
+                            <div class="alert alert-danger mb-3">{{ $message }}</div>
+                        @enderror
+
+                        <div class="mb-3">
+                            <label for="portal-contact-email" class="form-label">Email Address</label>
+                            <input type="email"
+                                   class="form-control @error('email') is-invalid @enderror"
+                                   id="portal-contact-email"
+                                   name="email"
+                                   value="{{ old('email', auth()->user()->email) }}"
+                                   required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="portal-contact-comments" class="form-label">Your Message</label>
+                            <textarea class="form-control @error('comments') is-invalid @enderror"
+                                      id="portal-contact-comments"
+                                      name="comments"
+                                      rows="5"
+                                      required>{{ old('comments') }}</textarea>
+                            @error('comments')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -252,6 +314,14 @@
         }
         document.addEventListener('turbo:load', updateSidebarActive);
     </script>
+
+    @if(session('contact_success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new bootstrap.Modal(document.getElementById('portalContactModal')).show();
+        });
+    </script>
+    @endif
 
     @stack('scripts')
 </body>
