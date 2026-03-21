@@ -3,7 +3,6 @@
 @section('title', 'AI Advisor')
 
 @push('styles')
-<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <style>
     /* ── Chat panel ────────────────────────────────────────────── */
     #chat-panel {
@@ -196,6 +195,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <script>
 (function () {
     'use strict';
