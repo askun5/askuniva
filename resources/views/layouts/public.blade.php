@@ -48,7 +48,7 @@
             padding-top: 56px;
         }
         #public-topnav .navbar-brand img {
-            height: 24px;
+            height: 25px;
             width: auto;
         }
         /* Password requirement indicators (used in signup modal) */
