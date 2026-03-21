@@ -110,8 +110,8 @@
     <!-- Footer -->
     <footer class="py-4 bg-dark mt-auto" data-turbo-permanent>
         <div class="container-fluid px-4">
-            <div class="d-flex align-items-center justify-content-between small">
-                <div>
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-md-between small text-center gap-2">
+                <div class="d-flex gap-3">
                     @php
                         $footerLinks = json_decode(\App\Models\SiteSetting::get('footer_links', '[]'), true) ?? [
                             ['label' => 'Home', 'url' => '/'],
@@ -122,9 +122,9 @@
                     @endphp
                     @foreach($footerLinks as $link)
                         @if($link['label'] === 'Contact')
-                            <a href="#" class="text-light me-3" data-bs-toggle="modal" data-bs-target="#contactModal">{{ $link['label'] }}</a>
+                            <a href="#" class="text-light" data-bs-toggle="modal" data-bs-target="#contactModal">{{ $link['label'] }}</a>
                         @else
-                            <a href="{{ $link['url'] }}" class="text-light me-3">{{ $link['label'] }}</a>
+                            <a href="{{ $link['url'] }}" class="text-light">{{ $link['label'] }}</a>
                         @endif
                     @endforeach
                 </div>
