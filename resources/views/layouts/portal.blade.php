@@ -186,8 +186,8 @@
             <!-- Footer -->
             <footer class="py-4 bg-dark mt-auto">
                 <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div>
+                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-md-between small text-center gap-2">
+                        <div class="d-flex gap-3">
                             @php
                                 $footerLinks = json_decode(\App\Models\SiteSetting::get('footer_links', '[]'), true) ?? [
                                     ['label' => 'About', 'url' => '/about'],
@@ -197,9 +197,9 @@
                             @endphp
                             @foreach($footerLinks as $link)
                                 @if($link['label'] === 'Contact')
-                                    <a href="#" class="text-light me-3" data-bs-toggle="modal" data-bs-target="#portalContactModal">{{ $link['label'] }}</a>
+                                    <a href="#" class="text-light" data-bs-toggle="modal" data-bs-target="#portalContactModal">{{ $link['label'] }}</a>
                                 @else
-                                    <a href="{{ $link['url'] }}" class="text-light me-3">{{ $link['label'] }}</a>
+                                    <a href="{{ $link['url'] }}" class="text-light">{{ $link['label'] }}</a>
                                 @endif
                             @endforeach
                         </div>
@@ -222,10 +222,10 @@
                 <div class="modal-header border-0 pb-0">
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body px-5 pb-5 pt-0">
+                <div class="modal-body px-3 px-sm-5 pb-5 pt-0">
                     <div class="text-center mb-4">
                         <h1 class="mb-2">Contact Us</h1>
-                        <h2 class="h5 text-muted mb-0">Have questions? We'd love to hear from you.</h2>
+                        <h2 class="h5 text-muted mb-0">Have questions?<br>We'd love to hear from you.</h2>
                     </div>
 
                     @if(session('contact_success'))

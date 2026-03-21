@@ -129,7 +129,7 @@
                         @enderror
                     </div>
 
-                    <div class="d-flex gap-2">
+                    <div class="d-flex flex-column flex-md-row gap-2">
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="bi bi-check-lg me-2"></i>Save Changes
                         </button>

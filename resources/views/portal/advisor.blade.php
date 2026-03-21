@@ -122,7 +122,7 @@
         {{-- ── Tips ──────────────────────────────────────────────────── --}}
         <div class="card mb-4">
             <div class="card-body">
-                <h5><i class="bi bi-lightbulb me-2 text-warning"></i>Tips for Using the AI Advisor</h5>
+                <h5 class="d-flex align-items-start gap-2"><i class="bi bi-lightbulb text-warning flex-shrink-0 mt-1"></i>Tips for Using the AI Advisor</h5>
                 <ul class="mb-0">
                     <li>Be specific with your questions for better answers</li>
                     <li>Ask about college requirements, test prep, extracurriculars, and application tips</li>
@@ -146,11 +146,13 @@
                             Get personalised college advice tailored to your profile as a
                             <strong>{{ $user->grade_display }}</strong> student.
                         </p>
+                        <div class="d-grid d-md-block">
                         <button class="btn btn-primary btn-lg px-5" id="btn-welcome-start">
-                            <i class="bi bi-chat-dots-fill me-2"></i>Start a New Chat
+                            New Chat
                         </button>
+                        </div>
                         @if($lastSession)
-                        <br><a href="#" class="d-inline-block mt-3 small" id="btn-welcome-load">
+                        <br><a href="#" class="d-inline-block mt-1 small" id="btn-welcome-load">
                             <i class="bi bi-clock-history me-1"></i>Load Last Chat
                         </a>
                         @endif

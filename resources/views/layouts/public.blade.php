@@ -145,10 +145,10 @@
                 <div class="modal-header border-0 pb-0">
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body px-5 pb-5 pt-0">
+                <div class="modal-body px-3 px-sm-5 pb-5 pt-0">
                     <div class="text-center mb-4">
                         <h1 class="mb-2">Contact Us</h1>
-                        <h2 class="h5 text-muted mb-0">Have questions? We'd love to hear from you.</h2>
+                        <h2 class="h5 text-muted mb-0">Have questions?<br>We'd love to hear from you.</h2>
                     </div>
 
                     @if(session('contact_success'))
@@ -205,7 +205,7 @@
                 <div class="modal-header border-0 pb-0">
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body px-5 pb-5 pt-0">
+                <div class="modal-body px-3 px-sm-5 pb-5 pt-0">
                     <div class="text-center mb-4">
                         <h1 class="mb-2">Welcome Back</h1>
                         <h2 class="h5 text-muted mb-0">Sign in to your account</h2>
@@ -284,7 +284,7 @@
                 <div class="modal-header border-0 pb-0">
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body px-5 pb-5 pt-0">
+                <div class="modal-body px-3 px-sm-5 pb-5 pt-0">
                     <div class="text-center mb-4">
                         <h1 class="mb-2">Get Started</h1>
                         <h2 class="h5 text-muted mb-0">Create your Univa account</h2>

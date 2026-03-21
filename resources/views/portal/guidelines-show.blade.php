@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <div class="mt-4 d-flex justify-content-end">
+        <div class="mt-4 d-grid d-md-flex justify-content-md-end">
             <a href="{{ route('portal.advisor') }}" class="btn btn-primary btn-lg">
                 Chat with AI Advisor
             </a>
