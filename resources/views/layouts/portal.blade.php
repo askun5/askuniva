@@ -46,7 +46,7 @@
         @php $logo = \App\Models\SiteSetting::get('site_logo'); @endphp
         <a class="navbar-brand ps-3" href="{{ route('portal.dashboard') }}">
             @if($logo)
-                <img src="{{ Storage::url($logo) }}" alt="Univa" height="30">
+                <img src="{{ Storage::url($logo) }}" alt="Univa" height="24">
             @else
                 Univa
             @endif
