@@ -3,6 +3,7 @@
 @section('title', 'AI Advisor')
 
 @push('styles')
+<meta name="turbo-cache-control" content="no-cache">
 <style>
     /* ── Chat panel ────────────────────────────────────────────── */
     #chat-panel {
@@ -153,6 +154,14 @@
 
         {{-- ── Main Chat Card ────────────────────────────────────────── --}}
         <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center" id="chat-card-header" style="display:none;">
+                <span class="fw-semibold small text-muted">AI Advisor</span>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" id="btn-new-chat">
+                        <i class="bi bi-plus-lg me-1"></i>New Chat
+                    </button>
+                </div>
+            </div>
             <div id="chat-panel">
                 {{-- Messages --}}
                 <div id="chat-messages">
@@ -241,13 +250,49 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <script>
 (function () {
     'use strict';
 
-    // Configure marked (v9+ API)
-    marked.use({ breaks: true, gfm: true });
+    // Inline markdown parser (no external dependency)
+    function parseMarkdown(text) {
+        text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        text = text.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+        text = text.replace(/\*\*\*([^*\n]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+        text = text.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        text = text.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+        const lines = text.split('\n');
+        const out = [];
+        let inUl = false, inOl = false;
+        for (const line of lines) {
+            const ul = line.match(/^[ \t]*[-*]\s+(.+)/);
+            const ol = line.match(/^[ \t]*\d+\.\s+(.+)/);
+            const h  = line.match(/^(#{1,6})\s+(.+)/);
+            if (ul) {
+                if (inOl) { out.push('</ol>'); inOl = false; }
+                if (!inUl) { out.push('<ul>'); inUl = true; }
+                out.push('<li>' + ul[1] + '</li>');
+            } else if (ol) {
+                if (inUl) { out.push('</ul>'); inUl = false; }
+                if (!inOl) { out.push('<ol>'); inOl = true; }
+                out.push('<li>' + ol[1] + '</li>');
+            } else {
+                if (inUl) { out.push('</ul>'); inUl = false; }
+                if (inOl) { out.push('</ol>'); inOl = false; }
+                if (h) {
+                    const lvl = Math.min(h[1].length + 3, 6);
+                    out.push('<h' + lvl + '>' + h[2] + '</h' + lvl + '>');
+                } else if (line.trim() === '') {
+                    out.push('<br>');
+                } else {
+                    out.push('<p>' + line + '</p>');
+                }
+            }
+        }
+        if (inUl) out.push('</ul>');
+        if (inOl) out.push('</ol>');
+        return out.join('');
+    }
 
     const QUESTION_LIMIT    = {{ $questionLimit }};
 
@@ -305,13 +350,17 @@
         }
     }
 
+    const chatCardHeaderEl = document.getElementById('chat-card-header');
+
     function showChat(count, isSubmitted) {
         updateQuestionCounter(count, isSubmitted);
         welcomeEl.style.display = 'none';
+        chatCardHeaderEl.style.display = '';
     }
 
     function showWelcome() {
         welcomeEl.style.display          = 'block';
+        chatCardHeaderEl.style.display   = 'none';
         inputAreaEl.style.display        = 'none';
         sessionLimitEl.style.display     = 'none';
         sessionSubmittedEl.style.display = 'none';
@@ -467,7 +516,7 @@
         if (messages && messages.length > 0) {
             messages.forEach(msg => {
                 if (msg.role === 'model') {
-                    appendBubble('model', marked.parse(msg.content), true);
+                    appendBubble('model', parseMarkdown(msg.content), true);
                 } else {
                     appendBubble('user', msg.content);
                 }
@@ -530,7 +579,7 @@
         setSending(false);
 
         if (ok && data.success) {
-            appendBubble('model', marked.parse(data.message), true);
+            appendBubble('model', parseMarkdown(data.message), true);
             updateQuestionCounter(data.question_count ?? (questionCount + 1), false);
         } else if (data.suspended) {
             showSuspended();
@@ -564,7 +613,11 @@
 
     // ── Event listeners ────────────────────────────────────────────────────
 
-    if (btnNewChat)         btnNewChat.addEventListener('click', handleNewChat);
+    if (btnNewChat)         btnNewChat.addEventListener('click', function () {
+        currentSessionId = null;
+        clearMessages();
+        showWelcome();
+    });
     if (btnLoadLast)        btnLoadLast.addEventListener('click', handleLoadLast);
     if (btnWelcomeStart)    btnWelcomeStart.addEventListener('click', handleNewChat);
     if (btnWelcomeLoad)     btnWelcomeLoad.addEventListener('click', handleLoadLast);
