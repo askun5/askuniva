@@ -104,13 +104,14 @@ class ContentController extends Controller
 
         $defaultGreeting = "Hello, {name}! I'm your AI College Advisor here at Univa. As a {grade} student, I can help you navigate the college application process, explore schools, prepare for standardized tests, and more. What would you like to talk about today?";
 
-        $tips          = json_decode(SiteSetting::get('advisor_tips', $defaultTips), true);
-        $disclaimer    = SiteSetting::get('advisor_disclaimer', $defaultDisclaimer);
-        $greeting      = SiteSetting::get('advisor_greeting', $defaultGreeting);
-        $sessionLimit  = (int) SiteSetting::get('advisor_session_limit', 1);
-        $questionLimit = (int) SiteSetting::get('advisor_question_limit', 15);
+        $tips             = json_decode(SiteSetting::get('advisor_tips', $defaultTips), true);
+        $disclaimer       = SiteSetting::get('advisor_disclaimer', $defaultDisclaimer);
+        $greeting         = SiteSetting::get('advisor_greeting', $defaultGreeting);
+        $sessionLimit     = (int) SiteSetting::get('advisor_session_limit', 1);
+        $questionLimit    = (int) SiteSetting::get('advisor_question_limit', 15);
+        $warningThreshold = (int) SiteSetting::get('advisor_warning_threshold', 3);
 
-        return view('admin.content.advisor', compact('tips', 'disclaimer', 'greeting', 'sessionLimit', 'questionLimit'));
+        return view('admin.content.advisor', compact('tips', 'disclaimer', 'greeting', 'sessionLimit', 'questionLimit', 'warningThreshold'));
     }
 
     /**
@@ -119,19 +120,21 @@ class ContentController extends Controller
     public function updateAdvisor(Request $request)
     {
         $request->validate([
-            'tips'           => ['required', 'array', 'min:1'],
-            'tips.*'         => ['required', 'string', 'max:500'],
-            'disclaimer'     => ['required', 'string', 'max:2000'],
-            'greeting'       => ['required', 'string', 'max:1000'],
-            'session_limit'  => ['required', 'integer', 'min:1', 'max:10'],
-            'question_limit' => ['required', 'integer', 'min:1', 'max:100'],
+            'tips'              => ['required', 'array', 'min:1'],
+            'tips.*'            => ['required', 'string', 'max:500'],
+            'disclaimer'        => ['required', 'string', 'max:2000'],
+            'greeting'          => ['required', 'string', 'max:1000'],
+            'session_limit'     => ['required', 'integer', 'min:1', 'max:10'],
+            'question_limit'    => ['required', 'integer', 'min:1', 'max:100'],
+            'warning_threshold' => ['required', 'integer', 'min:1', 'max:10'],
         ]);
 
-        SiteSetting::set('advisor_tips',           json_encode(array_values($request->tips)), 'json',    'advisor');
-        SiteSetting::set('advisor_disclaimer',     $request->disclaimer,                      'textarea', 'advisor');
-        SiteSetting::set('advisor_greeting',       $request->greeting,                        'textarea', 'advisor');
-        SiteSetting::set('advisor_session_limit',  $request->session_limit,                   'number',   'advisor');
-        SiteSetting::set('advisor_question_limit', $request->question_limit,                  'number',   'advisor');
+        SiteSetting::set('advisor_tips',              json_encode(array_values($request->tips)), 'json',    'advisor');
+        SiteSetting::set('advisor_disclaimer',        $request->disclaimer,                      'textarea', 'advisor');
+        SiteSetting::set('advisor_greeting',          $request->greeting,                        'textarea', 'advisor');
+        SiteSetting::set('advisor_session_limit',     $request->session_limit,                   'number',   'advisor');
+        SiteSetting::set('advisor_question_limit',    $request->question_limit,                  'number',   'advisor');
+        SiteSetting::set('advisor_warning_threshold', $request->warning_threshold,               'number',   'advisor');
 
         return back()->with('success', 'AI Advisor settings updated successfully.');
     }

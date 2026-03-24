@@ -192,6 +192,69 @@ class GeminiService
     }
 
     /**
+     * Moderate a user message for off-topic or disrespectful content.
+     *
+     * @return array{appropriate: bool, reason?: 'off_topic'|'disrespectful'}
+     */
+    public function moderateMessage(string $message): array
+    {
+        $systemPrompt = <<<PROMPT
+You are a strict content moderator for a US college guidance chatbot for high school students.
+
+Classify the student's message as exactly one of:
+- "ok" — relates to college applications, admissions, essays, financial aid, scholarships, SAT/ACT/AP exams, choosing a major, extracurriculars, recommendation letters, college life, academic planning, career guidance, or student stress related to academics/college.
+- "off_topic" — clearly unrelated to college or academics (e.g., gaming, movies, personal relationships, random trivia, jokes, general chat).
+- "disrespectful" — contains profanity, insults, threats, sexually explicit content, or offensive language.
+
+Respond with ONLY one word: ok, off_topic, or disrespectful
+PROMPT;
+
+        $url = "{$this->endpoint}/{$this->model}:generateContent?key={$this->apiKey}";
+
+        $payload = [
+            'system_instruction' => [
+                'parts' => [['text' => $systemPrompt]],
+            ],
+            'contents' => [
+                ['role' => 'user', 'parts' => [['text' => $message]]],
+            ],
+            'generationConfig' => [
+                'maxOutputTokens' => 5,
+                'temperature'     => 0,
+            ],
+        ];
+
+        try {
+            $response = Http::timeout(10)
+                ->withOptions(['verify' => app()->isProduction()])
+                ->post($url, $payload);
+
+            if (!$response->successful()) {
+                Log::warning('Moderation API error', ['status' => $response->status()]);
+                return ['appropriate' => true]; // fail open
+            }
+
+            $verdict = strtolower(trim(
+                $response->json('candidates.0.content.parts.0.text') ?? 'ok'
+            ));
+
+            if (str_starts_with($verdict, 'off_topic') || str_starts_with($verdict, 'off topic')) {
+                return ['appropriate' => false, 'reason' => 'off_topic'];
+            }
+
+            if (str_starts_with($verdict, 'disrespectful')) {
+                return ['appropriate' => false, 'reason' => 'disrespectful'];
+            }
+
+            return ['appropriate' => true];
+
+        } catch (\Exception $e) {
+            Log::error('Moderation exception', ['message' => $e->getMessage()]);
+            return ['appropriate' => true]; // fail open
+        }
+    }
+
+    /**
      * Build the system prompt injecting the student's profile data.
      */
     private function buildSystemPrompt(User $user): string

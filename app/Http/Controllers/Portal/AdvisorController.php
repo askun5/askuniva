@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal;
 use App\Http\Controllers\Controller;
 use App\Models\AiChatSession;
 use App\Models\AiChatMessage;
+use App\Models\AiChatWarning;
 use App\Models\SiteSetting;
 use App\Services\GeminiService;
 use Illuminate\Http\Request;
@@ -12,6 +13,11 @@ use Illuminate\Http\Request;
 class AdvisorController extends Controller
 {
     const SESSION_HOURS = 24;
+
+    private static function warningThreshold(): int
+    {
+        return max(1, (int) SiteSetting::get('advisor_warning_threshold', 3));
+    }
 
     private static function questionLimit(): int
     {
@@ -145,6 +151,15 @@ class AdvisorController extends Controller
             ->where('user_id', $user->id)
             ->firstOrFail();
 
+        // Block suspended users
+        if ($user->advisor_suspended_at) {
+            return response()->json([
+                'success'   => false,
+                'suspended' => true,
+                'message'   => 'Your AI Advisor access has been suspended due to repeated policy violations. Please contact us to appeal.',
+            ], 403);
+        }
+
         // Block if session was already submitted
         if ($session->submitted_at) {
             return response()->json([
@@ -166,6 +181,53 @@ class AdvisorController extends Controller
                 'question_limit_reached' => true,
                 'message'                => "You have reached the {$questionLimit}-question limit for this session. Submit your questions to receive detailed answers.",
             ], 429);
+        }
+
+        // Moderate the message before sending to Gemini
+        $moderation = $gemini->moderateMessage($request->message);
+
+        if (!$moderation['appropriate']) {
+            $threshold     = self::warningThreshold();
+            $warningNumber = $user->advisor_warnings + 1;
+
+            AiChatWarning::create([
+                'user_id'        => $user->id,
+                'session_id'     => $session->id,
+                'message_content'=> $request->message,
+                'reason'         => $moderation['reason'],
+                'warning_number' => $warningNumber,
+            ]);
+
+            $user->increment('advisor_warnings');
+
+            // Suspend when threshold is reached
+            if ($warningNumber >= $threshold) {
+                $user->update(['advisor_suspended_at' => now()]);
+
+                return response()->json([
+                    'success'   => false,
+                    'suspended' => true,
+                    'message'   => 'Your AI Advisor access has been suspended due to repeated policy violations. Please contact us to appeal.',
+                ], 403);
+            }
+
+            $warningMessages = [
+                'off_topic'      => 'Your message appears to be off-topic. Please keep your questions related to college guidance, admissions, and academic planning.',
+                'disrespectful'  => 'Your message contains inappropriate or disrespectful language. Please maintain respectful communication.',
+            ];
+
+            $baseMessage  = $warningMessages[$moderation['reason']] ?? 'Your message violates our usage policy.';
+            $isFinal      = ($warningNumber === $threshold - 1);
+            $finalNotice  = $isFinal ? ' This is your final warning before your access is suspended.' : '';
+
+            return response()->json([
+                'success'        => false,
+                'flagged'        => true,
+                'reason'         => $moderation['reason'],
+                'warning_number' => $warningNumber,
+                'warning_max'    => $threshold,
+                'message'        => "Warning {$warningNumber}/{$threshold}: {$baseMessage}{$finalNotice}",
+            ], 422);
         }
 
         $result = $gemini->chat($user, $session, $request->message);

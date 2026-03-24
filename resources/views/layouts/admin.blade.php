@@ -61,6 +61,13 @@
                 <a class="list-group-item list-group-item-action bg-dark text-light border-0 p-3 {{ request()->routeIs('admin.content.advisor') ? 'active' : '' }}" href="{{ route('admin.content.advisor') }}">
                     <i class="bi bi-robot me-2"></i> AI Advisor Content
                 </a>
+                <a class="list-group-item list-group-item-action bg-dark text-light border-0 p-3 {{ request()->routeIs('admin.advisor.moderation*') ? 'active' : '' }}" href="{{ route('admin.advisor.moderation') }}">
+                    <i class="bi bi-shield-exclamation me-2"></i> Advisor Moderation
+                    @php $flagCount = \App\Models\User::whereNotNull('advisor_suspended_at')->count(); @endphp
+                    @if($flagCount > 0)
+                        <span class="badge bg-danger ms-2">{{ $flagCount }}</span>
+                    @endif
+                </a>
                 <a class="list-group-item list-group-item-action bg-dark text-light border-0 p-3 {{ request()->routeIs('admin.guidelines*') ? 'active' : '' }}" href="{{ route('admin.guidelines') }}">
                     <i class="bi bi-book me-2"></i> Guidelines
                 </a>

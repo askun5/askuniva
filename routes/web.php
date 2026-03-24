@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\GuidelinesManagementController;
 use App\Http\Controllers\Admin\ContactSubmissionsController;
 use App\Http\Controllers\Admin\AiUsageController;
+use App\Http\Controllers\Admin\AdvisorModerationController;
 use App\Http\Controllers\VerificationController;
 
 /*
@@ -154,4 +155,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // AI Usage Tracker
     Route::get('/ai-usage', [AiUsageController::class, 'index'])->name('ai.usage');
+
+    // Advisor Moderation
+    Route::get('/advisor-moderation', [AdvisorModerationController::class, 'index'])->name('advisor.moderation');
+    Route::post('/advisor-moderation/{user}/reset', [AdvisorModerationController::class, 'resetWarnings'])->name('advisor.moderation.reset');
+    Route::post('/advisor-moderation/{user}/unsuspend', [AdvisorModerationController::class, 'unsuspend'])->name('advisor.moderation.unsuspend');
 });

@@ -49,6 +49,19 @@
                     @enderror
                     <div class="form-text">Maximum questions a student can ask in a single session (1–100).</div>
                 </div>
+                <div class="col-md-4">
+                    <label for="warning_threshold" class="form-label fw-medium">Warnings before suspension</label>
+                    <input type="number"
+                           class="form-control @error('warning_threshold') is-invalid @enderror"
+                           id="warning_threshold"
+                           name="warning_threshold"
+                           value="{{ old('warning_threshold', $warningThreshold) }}"
+                           min="1" max="10" required>
+                    @error('warning_threshold')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <div class="form-text">How many policy violations before a student's access is suspended (1–10).</div>
+                </div>
             </div>
         </div>
     </div>

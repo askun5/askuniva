@@ -28,6 +28,8 @@ class User extends Authenticatable implements MustVerifyEmailContract
         'zip_code',
         'city',
         'state',
+        'advisor_warnings',
+        'advisor_suspended_at',
     ];
 
     /**
@@ -44,10 +46,11 @@ class User extends Authenticatable implements MustVerifyEmailContract
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'last_login_at' => 'datetime',
-            'newsletter' => 'boolean',
-            'password' => 'hashed',
+            'email_verified_at'    => 'datetime',
+            'last_login_at'        => 'datetime',
+            'advisor_suspended_at' => 'datetime',
+            'newsletter'           => 'boolean',
+            'password'             => 'hashed',
         ];
     }
 

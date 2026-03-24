@@ -217,6 +217,14 @@
                         <strong>Questions submitted!</strong> Our advisors will review your questions and send you detailed answers soon.
                     </div>
                 </div>
+
+                {{-- Shown when the user's account is suspended --}}
+                <div id="account-suspended-area" style="display:none;">
+                    <div class="alert alert-danger mb-0">
+                        <i class="bi bi-slash-circle-fill me-1"></i>
+                        <strong>Access Suspended.</strong> Your AI Advisor access has been suspended due to repeated policy violations. Please contact us to appeal.
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -247,8 +255,9 @@
     const messagesEl        = document.getElementById('chat-messages');
     const welcomeEl         = document.getElementById('chat-welcome');
     const inputAreaEl       = document.getElementById('chat-input-area');
-    const sessionLimitEl    = document.getElementById('session-limit-area');
-    const sessionSubmittedEl= document.getElementById('session-submitted-area');
+    const sessionLimitEl      = document.getElementById('session-limit-area');
+    const sessionSubmittedEl  = document.getElementById('session-submitted-area');
+    const accountSuspendedEl  = document.getElementById('account-suspended-area');
     const chatInputEl       = document.getElementById('chat-input');
     const btnSend           = document.getElementById('btn-send');
     const btnSubmitSession  = document.getElementById('btn-submit-session');
@@ -281,9 +290,10 @@
         }
 
         // Show the right bottom area
-        inputAreaEl.style.display       = 'none';
-        sessionLimitEl.style.display    = 'none';
-        sessionSubmittedEl.style.display= 'none';
+        inputAreaEl.style.display        = 'none';
+        sessionLimitEl.style.display     = 'none';
+        sessionSubmittedEl.style.display = 'none';
+        accountSuspendedEl.style.display = 'none';
 
         if (isSubmitted) {
             sessionSubmittedEl.style.display = 'block';
@@ -366,6 +376,21 @@
         el.textContent = text;
         messagesEl.appendChild(el);
         scrollToBottom();
+    }
+
+    function appendWarningAlert(text) {
+        const el = document.createElement('div');
+        el.className = 'alert alert-warning mx-3 my-2 py-2 small mb-0';
+        el.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i>' + text;
+        messagesEl.appendChild(el);
+        scrollToBottom();
+    }
+
+    function showSuspended() {
+        inputAreaEl.style.display        = 'none';
+        sessionLimitEl.style.display     = 'none';
+        sessionSubmittedEl.style.display = 'none';
+        accountSuspendedEl.style.display = 'block';
     }
 
     function setSending(sending) {
@@ -507,6 +532,10 @@
         if (ok && data.success) {
             appendBubble('model', marked.parse(data.message), true);
             updateQuestionCounter(data.question_count ?? (questionCount + 1), false);
+        } else if (data.suspended) {
+            showSuspended();
+        } else if (data.flagged) {
+            appendWarningAlert(data.message);
         } else if (status === 429 && data.question_limit_reached) {
             updateQuestionCounter(QUESTION_LIMIT, !!data.submitted_at);
         } else if (status === 429 && data.cap_reached) {
