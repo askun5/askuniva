@@ -100,6 +100,7 @@ Route::middleware(['auth', 'verified'])->prefix('portal')->name('portal.')->grou
     Route::post('/advisor/session/new', [AdvisorController::class, 'newSession'])->name('advisor.session.new');
     Route::get('/advisor/session/last', [AdvisorController::class, 'loadLastSession'])->name('advisor.session.last');
     Route::post('/advisor/chat', [AdvisorController::class, 'chat'])->name('advisor.chat');
+    Route::post('/advisor/session/submit', [AdvisorController::class, 'submitSession'])->name('advisor.session.submit');
 
     // User Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');

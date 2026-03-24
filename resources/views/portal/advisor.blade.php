@@ -111,6 +111,26 @@
         padding: 0;
         flex-shrink: 0;
     }
+
+    /* ── Limit / submitted areas ───────────────────────────────── */
+    #session-limit-area,
+    #session-submitted-area {
+        border-top: 1px solid #dee2e6;
+        background: #fff;
+    }
+    #session-limit-area .alert,
+    #session-submitted-area .alert {
+        border-radius: 0;
+        margin: 0;
+    }
+
+    /* ── Question counter ──────────────────────────────────────── */
+    #question-counter {
+        font-size: 0.78rem;
+        font-weight: 500;
+    }
+    #question-counter.near-limit { color: #fd7e14; }
+    #question-counter.at-limit   { color: #dc3545; }
 </style>
 @endpush
 
@@ -170,8 +190,31 @@
                             <i class="bi bi-send-fill"></i>
                         </button>
                     </div>
-                    <div class="text-muted small mt-1" style="padding-left:0.25rem;">
-                        Press <kbd>Enter</kbd> to send &nbsp;·&nbsp; <kbd>Shift+Enter</kbd> for new line
+                    <div class="text-muted small mt-1 d-flex justify-content-between align-items-center" style="padding-left:0.25rem;">
+                        <span>Press <kbd>Enter</kbd> to send &nbsp;·&nbsp; <kbd>Shift+Enter</kbd> for new line</span>
+                        <span id="question-counter">0 / {{ $questionLimit }} questions</span>
+                    </div>
+                </div>
+
+                {{-- Shown when the 15-question limit is reached --}}
+                <div id="session-limit-area" style="display:none;">
+                    <div class="alert alert-warning mb-0 d-flex align-items-start gap-2">
+                        <i class="bi bi-exclamation-triangle-fill mt-1 flex-shrink-0"></i>
+                        <div>
+                            <strong>Question limit reached.</strong>
+                            <p class="mb-2 small mt-1">You've used all {{ $questionLimit }} questions for this session. Submit your questions and our advisors will send you detailed answers.</p>
+                            <button id="btn-submit-session" class="btn btn-primary btn-sm">
+                                <i class="bi bi-send me-1"></i>Submit Questions for Review
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Shown after submission --}}
+                <div id="session-submitted-area" style="display:none;">
+                    <div class="alert alert-success mb-0">
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        <strong>Questions submitted!</strong> Our advisors will review your questions and send you detailed answers soon.
                     </div>
                 </div>
             </div>
@@ -198,19 +241,26 @@
     // Configure marked (v9+ API)
     marked.use({ breaks: true, gfm: true });
 
-    const csrfToken     = document.querySelector('meta[name="csrf-token"]').content;
-    const messagesEl    = document.getElementById('chat-messages');
-    const welcomeEl     = document.getElementById('chat-welcome');
-    const inputAreaEl   = document.getElementById('chat-input-area');
-    const chatInputEl   = document.getElementById('chat-input');
-    const btnSend       = document.getElementById('btn-send');
-    const btnNewChat    = document.getElementById('btn-new-chat');
-    const btnLoadLast   = document.getElementById('btn-load-last');
-    const btnWelcomeStart = document.getElementById('btn-welcome-start');
-    const btnWelcomeLoad  = document.getElementById('btn-welcome-load');
+    const QUESTION_LIMIT    = {{ $questionLimit }};
+
+    const csrfToken         = document.querySelector('meta[name="csrf-token"]').content;
+    const messagesEl        = document.getElementById('chat-messages');
+    const welcomeEl         = document.getElementById('chat-welcome');
+    const inputAreaEl       = document.getElementById('chat-input-area');
+    const sessionLimitEl    = document.getElementById('session-limit-area');
+    const sessionSubmittedEl= document.getElementById('session-submitted-area');
+    const chatInputEl       = document.getElementById('chat-input');
+    const btnSend           = document.getElementById('btn-send');
+    const btnSubmitSession  = document.getElementById('btn-submit-session');
+    const btnNewChat        = document.getElementById('btn-new-chat');
+    const btnLoadLast       = document.getElementById('btn-load-last');
+    const btnWelcomeStart   = document.getElementById('btn-welcome-start');
+    const btnWelcomeLoad    = document.getElementById('btn-welcome-load');
+    const questionCounterEl = document.getElementById('question-counter');
 
     let currentSessionId = null;
     let isSending        = false;
+    let questionCount    = 0;
 
     // ── Helpers ────────────────────────────────────────────────────────────
 
@@ -218,15 +268,43 @@
         messagesEl.scrollTop = messagesEl.scrollHeight;
     }
 
-    function showChat() {
-        welcomeEl.style.display    = 'none';
-        inputAreaEl.style.display  = 'block';
-        chatInputEl.focus();
+    function updateQuestionCounter(count, isSubmitted) {
+        questionCount = count;
+
+        // Update counter badge
+        questionCounterEl.textContent = count + ' / ' + QUESTION_LIMIT + ' questions';
+        questionCounterEl.classList.remove('near-limit', 'at-limit');
+        if (count >= QUESTION_LIMIT) {
+            questionCounterEl.classList.add('at-limit');
+        } else if (count >= QUESTION_LIMIT - 3) {
+            questionCounterEl.classList.add('near-limit');
+        }
+
+        // Show the right bottom area
+        inputAreaEl.style.display       = 'none';
+        sessionLimitEl.style.display    = 'none';
+        sessionSubmittedEl.style.display= 'none';
+
+        if (isSubmitted) {
+            sessionSubmittedEl.style.display = 'block';
+        } else if (count >= QUESTION_LIMIT) {
+            sessionLimitEl.style.display = 'block';
+        } else {
+            inputAreaEl.style.display = 'block';
+            chatInputEl.focus();
+        }
+    }
+
+    function showChat(count, isSubmitted) {
+        updateQuestionCounter(count, isSubmitted);
+        welcomeEl.style.display = 'none';
     }
 
     function showWelcome() {
-        welcomeEl.style.display   = 'block';
-        inputAreaEl.style.display = 'none';
+        welcomeEl.style.display          = 'block';
+        inputAreaEl.style.display        = 'none';
+        sessionLimitEl.style.display     = 'none';
+        sessionSubmittedEl.style.display = 'none';
         // Clear messages except welcome
         Array.from(messagesEl.children).forEach(el => {
             if (el.id !== 'chat-welcome') el.remove();
@@ -291,8 +369,8 @@
     }
 
     function setSending(sending) {
-        isSending         = sending;
-        btnSend.disabled  = sending;
+        isSending            = sending;
+        btnSend.disabled     = sending;
         chatInputEl.disabled = sending;
         if (sending) {
             btnSend.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
@@ -300,6 +378,12 @@
             btnSend.innerHTML = '<i class="bi bi-send-fill"></i>';
             chatInputEl.focus();
         }
+    }
+
+    function clearMessages() {
+        Array.from(messagesEl.children).forEach(el => {
+            if (el.id !== 'chat-welcome') el.remove();
+        });
     }
 
     // ── API calls ──────────────────────────────────────────────────────────
@@ -312,11 +396,7 @@
         if (!res.ok) {
             throw new Error('Session creation failed (' + res.status + ')');
         }
-        const data = await res.json();
-        if (!data.session_id) {
-            throw new Error('No session_id in response');
-        }
-        return data.session_id;
+        return await res.json();
     }
 
     async function loadLastSession() {
@@ -342,31 +422,50 @@
         return { ok: res.ok, status: res.status, data: await res.json() };
     }
 
+    async function submitSession() {
+        const res = await fetch('{{ route("portal.advisor.session.submit") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ session_id: currentSessionId }),
+        });
+        return res.ok;
+    }
+
     // ── Actions ────────────────────────────────────────────────────────────
 
-    function setBtnLoading(btn, loading, originalHtml) {
-        btn.disabled = loading;
-        btn.innerHTML = loading
-            ? '<span class="spinner-border spinner-border-sm me-1"></span>Starting…'
-            : originalHtml;
+    function renderMessages(messages) {
+        clearMessages();
+        if (messages && messages.length > 0) {
+            messages.forEach(msg => {
+                if (msg.role === 'model') {
+                    appendBubble('model', marked.parse(msg.content), true);
+                } else {
+                    appendBubble('user', msg.content);
+                }
+            });
+        }
     }
 
     async function handleNewChat() {
-        const originalHtml = btnNewChat ? btnNewChat.innerHTML : '';
-        if (btnNewChat) setBtnLoading(btnNewChat, true, originalHtml);
         try {
-            currentSessionId = await startNewSession();
-            // Clear old messages
-            Array.from(messagesEl.children).forEach(el => {
-                if (el.id !== 'chat-welcome') el.remove();
-            });
-            showChat();
-            appendSystemMessage('New chat started. Say hello!');
+            const data = await startNewSession();
+            currentSessionId = data.session_id;
+
+            renderMessages(data.messages || []);
+            showChat(data.question_count || 0, !!data.submitted_at);
+
+            if (data.already_exists) {
+                appendSystemMessage('Continuing your session from today (' + (data.question_count || 0) + '/' + QUESTION_LIMIT + ' questions used).');
+            } else if (!data.messages || data.messages.length === 0) {
+                appendSystemMessage('New chat started. Say hello!');
+            }
         } catch (err) {
             console.error('handleNewChat error:', err);
             alert('Could not start a new chat. Please refresh the page and try again.\n\nError: ' + err.message);
-        } finally {
-            if (btnNewChat) setBtnLoading(btnNewChat, false, originalHtml);
         }
     }
 
@@ -378,21 +477,12 @@
                 return;
             }
             currentSessionId = data.session_id;
-            // Clear stale messages
-            Array.from(messagesEl.children).forEach(el => {
-                if (el.id !== 'chat-welcome') el.remove();
-            });
-            showChat();
-            if (data.messages.length === 0) {
+
+            renderMessages(data.messages || []);
+            showChat(data.question_count || 0, !!data.submitted_at);
+
+            if (!data.messages || data.messages.length === 0) {
                 appendSystemMessage('Previous chat loaded — no messages yet. Say hello!');
-            } else {
-                data.messages.forEach(msg => {
-                    if (msg.role === 'model') {
-                        appendBubble('model', marked.parse(msg.content), true);
-                    } else {
-                        appendBubble('user', msg.content);
-                    }
-                });
             }
         } catch (err) {
             console.error('handleLoadLast error:', err);
@@ -416,6 +506,9 @@
 
         if (ok && data.success) {
             appendBubble('model', marked.parse(data.message), true);
+            updateQuestionCounter(data.question_count ?? (questionCount + 1), false);
+        } else if (status === 429 && data.question_limit_reached) {
+            updateQuestionCounter(QUESTION_LIMIT, !!data.submitted_at);
         } else if (status === 429 && data.cap_reached) {
             appendSystemMessage('⚠ ' + data.message);
         } else if (status === 503) {
@@ -425,13 +518,29 @@
         }
     }
 
+    async function handleSubmit() {
+        btnSubmitSession.disabled  = true;
+        btnSubmitSession.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Submitting…';
+
+        const ok = await submitSession();
+        if (ok) {
+            sessionLimitEl.style.display     = 'none';
+            sessionSubmittedEl.style.display = 'block';
+        } else {
+            btnSubmitSession.disabled  = false;
+            btnSubmitSession.innerHTML = '<i class="bi bi-send me-1"></i>Submit Questions for Review';
+            appendSystemMessage('⚠ Could not submit. Please try again.');
+        }
+    }
+
     // ── Event listeners ────────────────────────────────────────────────────
 
-    if (btnNewChat)      btnNewChat.addEventListener('click', handleNewChat);
-    if (btnLoadLast)     btnLoadLast.addEventListener('click', handleLoadLast);
-    if (btnWelcomeStart) btnWelcomeStart.addEventListener('click', handleNewChat);
-    if (btnWelcomeLoad)  btnWelcomeLoad.addEventListener('click', handleLoadLast);
-    if (btnSend)         btnSend.addEventListener('click', handleSend);
+    if (btnNewChat)         btnNewChat.addEventListener('click', handleNewChat);
+    if (btnLoadLast)        btnLoadLast.addEventListener('click', handleLoadLast);
+    if (btnWelcomeStart)    btnWelcomeStart.addEventListener('click', handleNewChat);
+    if (btnWelcomeLoad)     btnWelcomeLoad.addEventListener('click', handleLoadLast);
+    if (btnSend)            btnSend.addEventListener('click', handleSend);
+    if (btnSubmitSession)   btnSubmitSession.addEventListener('click', handleSubmit);
 
     chatInputEl.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' && !e.shiftKey) {

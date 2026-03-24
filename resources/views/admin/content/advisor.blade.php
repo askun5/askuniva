@@ -13,6 +13,73 @@
     @csrf
     @method('PUT')
 
+    {{-- Conversation Rules --}}
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">
+            <i class="bi bi-sliders text-primary me-2"></i>Conversation Rules
+        </div>
+        <div class="card-body">
+            <p class="text-muted small mb-3">
+                Controls how many sessions a student can start and how many questions they can ask per session within a 24-hour window.
+            </p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="session_limit" class="form-label fw-medium">Sessions per 24 hours</label>
+                    <input type="number"
+                           class="form-control @error('session_limit') is-invalid @enderror"
+                           id="session_limit"
+                           name="session_limit"
+                           value="{{ old('session_limit', $sessionLimit) }}"
+                           min="1" max="10" required>
+                    @error('session_limit')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <div class="form-text">How many new chat sessions a student can start per day (1–10).</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="question_limit" class="form-label fw-medium">Questions per session</label>
+                    <input type="number"
+                           class="form-control @error('question_limit') is-invalid @enderror"
+                           id="question_limit"
+                           name="question_limit"
+                           value="{{ old('question_limit', $questionLimit) }}"
+                           min="1" max="100" required>
+                    @error('question_limit')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <div class="form-text">Maximum questions a student can ask in a single session (1–100).</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Opening Greeting --}}
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">
+            <i class="bi bi-chat-quote text-success me-2"></i>Opening Greeting
+        </div>
+        <div class="card-body">
+            <p class="text-muted small mb-1">
+                This message is automatically sent by the AI Advisor when a student starts a new chat session.
+                Use the placeholders below to personalise it:
+            </p>
+            <ul class="text-muted small mb-3">
+                <li><code>{name}</code> — student's first name</li>
+                <li><code>{grade}</code> — student's grade level (e.g. <em>11th Grader</em>)</li>
+            </ul>
+            <textarea class="form-control @error('greeting') is-invalid @enderror"
+                      name="greeting"
+                      id="greeting"
+                      rows="4"
+                      maxlength="1000"
+                      required>{{ old('greeting', $greeting) }}</textarea>
+            @error('greeting')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <div class="form-text">Shown as the first message in every new chat. Max 1,000 characters.</div>
+        </div>
+    </div>
+
     {{-- Tips --}}
     <div class="card mb-4">
         <div class="card-header fw-semibold">

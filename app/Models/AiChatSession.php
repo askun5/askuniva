@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class AiChatSession extends Model
 {
-    protected $fillable = ['user_id', 'title'];
+    protected $fillable = ['user_id', 'title', 'submitted_at'];
+
+    protected $casts = ['submitted_at' => 'datetime'];
 
     public function user()
     {
