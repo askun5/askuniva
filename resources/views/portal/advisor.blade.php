@@ -124,11 +124,9 @@
             <div class="card-body">
                 <h5 class="d-flex align-items-start gap-2"><i class="bi bi-lightbulb text-warning flex-shrink-0 mt-1"></i>Tips for Using the AI Advisor</h5>
                 <ul class="mb-0">
-                    <li>Be specific with your questions for better answers</li>
-                    <li>Ask about college requirements, test prep, extracurriculars, and application tips</li>
-                    <li>The advisor knows you're a <strong>{{ $user->grade_display }}</strong> student and will tailor advice accordingly</li>
-                    <li>You can ask follow-up questions to get more detailed information</li>
-                    <li>Your chat history is saved — use <strong>Load Last Chat</strong> to continue where you left off</li>
+                    @foreach($tips as $tip)
+                        <li>{!! nl2br(e(str_replace('{grade}', '<strong>' . e($user->grade_display) . '</strong>', $tip))) !!}</li>
+                    @endforeach
                 </ul>
             </div>
         </div>
@@ -183,12 +181,7 @@
         <div class="card mt-4 border-danger">
             <div class="card-body">
                 <h6 class="text-danger mb-1">Disclaimer</h6>
-                <p class="text-muted small mb-0">
-                    This advisor is intended for use with universities located within the United States only.
-                    All information provided is for general guidance purposes and may not reflect the most current
-                    institutional policies, requirements, or deadlines. Please verify all details directly with
-                    the respective institution before making any decisions.
-                </p>
+                <p class="text-muted small mb-0">{{ $disclaimer }}</p>
             </div>
         </div>
 

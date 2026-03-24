@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal;
 use App\Http\Controllers\Controller;
 use App\Models\AiChatSession;
 use App\Models\AiChatMessage;
+use App\Models\SiteSetting;
 use App\Services\GeminiService;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,20 @@ class AdvisorController extends Controller
         $user        = auth()->user();
         $lastSession = AiChatSession::where('user_id', $user->id)->latest()->first();
 
-        return view('portal.advisor', compact('user', 'lastSession'));
+        $defaultTips = json_encode([
+            'Be specific with your questions for better answers',
+            'Ask about college requirements, test prep, extracurriculars, and application tips',
+            'The advisor knows you\'re a {grade} student and will tailor advice accordingly',
+            'You can ask follow-up questions to get more detailed information',
+            'Your chat history is saved — use Load Last Chat to continue where you left off',
+        ]);
+
+        $defaultDisclaimer = 'This advisor is intended for use with universities located within the United States only. All information provided is for general guidance purposes and may not reflect the most current institutional policies, requirements, or deadlines. Please verify all details directly with the respective institution before making any decisions.';
+
+        $tips       = json_decode(SiteSetting::get('advisor_tips', $defaultTips), true);
+        $disclaimer = SiteSetting::get('advisor_disclaimer', $defaultDisclaimer);
+
+        return view('portal.advisor', compact('user', 'lastSession', 'tips', 'disclaimer'));
     }
 
     /**

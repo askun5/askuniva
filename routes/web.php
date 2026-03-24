@@ -137,6 +137,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/content/footer', [ContentController::class, 'footer'])->name('content.footer');
     Route::put('/content/footer', [ContentController::class, 'updateFooter'])->name('content.footer.update');
 
+    // CMS - AI Advisor Tips & Disclaimer
+    Route::get('/content/advisor', [ContentController::class, 'advisor'])->name('content.advisor');
+    Route::put('/content/advisor', [ContentController::class, 'updateAdvisor'])->name('content.advisor.update');
+
     // Grade-Specific Guidelines
     Route::get('/guidelines', [GuidelinesManagementController::class, 'index'])->name('guidelines');
     Route::get('/guidelines/{grade}/edit', [GuidelinesManagementController::class, 'edit'])->name('guidelines.edit');
